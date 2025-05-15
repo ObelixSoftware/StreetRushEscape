@@ -7,10 +7,14 @@ public class PlayerCarController : MonoBehaviour
     public float maxForwardSpeed = 12f;
     public float maxReverseSpeed = 6f;
     public float steeringSpeed = 200f;
+    public float bounceBackDistance = 1f;
+    public float bounceBackSpeed = 5f;
 
     private float currentSpeed = 0f;
     private float steerInput = 0f;
     private Rigidbody2D rb;
+    private bool isBouncing = false;
+    private Vector2 bounceDirection;
 
     void Start()
     {
@@ -21,6 +25,8 @@ public class PlayerCarController : MonoBehaviour
 
     void Update()
     {
+        if (isBouncing) return;
+
         bool forward = Input.GetKey(KeyCode.Space);
         bool reverse = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
 
@@ -49,6 +55,12 @@ public class PlayerCarController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isBouncing)
+        {
+            rb.velocity = bounceDirection * bounceBackSpeed;
+            return;
+        }
+
         if (Mathf.Abs(currentSpeed) > 0.1f && steerInput != 0f)
         {
             float direction = currentSpeed >= 0 ? 1f : -1f;
@@ -56,11 +68,32 @@ public class PlayerCarController : MonoBehaviour
         }
         else
         {
-            // Snap to nearest 90-degree angle when not turning
             float snappedRotation = Mathf.Round(rb.rotation / 90f) * 90f;
             rb.MoveRotation(Mathf.LerpAngle(rb.rotation, snappedRotation, Time.fixedDeltaTime * 5f));
         }
 
         rb.velocity = transform.up * currentSpeed;
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (isBouncing) return;
+
+        if (collision.contacts.Length > 0)
+        {
+            ContactPoint2D contact = collision.contacts[0];
+            bounceDirection = contact.normal; // push away from surface
+            currentSpeed = 0f;
+            isBouncing = true;
+
+            // End bounce after short delay
+            Invoke(nameof(StopBounce), 0.2f);
+        }
+    }
+
+    void StopBounce()
+    {
+        isBouncing = false;
+        rb.velocity = Vector2.zero;
     }
 }
