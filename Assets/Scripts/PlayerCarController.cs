@@ -1,34 +1,31 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;  // For UI Slider
+using UnityEngine.UI;
+using System.Collections;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerCarController : MonoBehaviour
 {
     public float acceleration = 5f;
-    public float maxForwardSpeed = 12f;
+    public float maxForwardSpeed = 6f;
     public float maxReverseSpeed = 6f;
     public float steeringSpeed = 200f;
     public float bounceBackDistance = 1f;
     public float bounceBackSpeed = 5f;
 
-    // Drift config
     public float driftDrag = 0.05f;
     public float normalDrag = 1f;
     public float driftSteeringMultiplier = 2.5f;
     public float driftSpeedBoost = 3f;
 
-    // Boost config
     public float boostMultiplier = 2f;
     public float boostDuration = 2f;
     private bool isBoosting = false;
     private float boostEndTime = 0f;
 
-    // Health system
     public int maxHealth = 100;
     public int collisionDamage = 20;
     private int currentHealth;
 
-    // UI slider for health bar
     public Slider healthBarSlider;
 
     private float currentSpeed = 0f;
@@ -37,6 +34,10 @@ public class PlayerCarController : MonoBehaviour
     private bool isBouncing = false;
     private Vector2 bounceDirection;
     private bool isDrifting = false;
+
+    private TrafficLightZone currentZone = null;
+    private bool isFrozen = false;
+    private bool hardStopForRedLight = false;
 
     void Start()
     {
@@ -54,36 +55,41 @@ public class PlayerCarController : MonoBehaviour
 
     void Update()
     {
-        if (isBouncing) return;
+        if (isBouncing || isFrozen) return;
 
-        // Drifting input
         isDrifting = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
-        // Boost input
         if (Input.GetKeyDown(KeyCode.X) && !isBoosting)
-        {
             StartBoost();
-        }
 
-        // Speed control
         bool forward = Input.GetKey(KeyCode.Space);
         bool reverse = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
 
-        if (forward)
+        hardStopForRedLight = currentZone != null && currentZone.GetLightState() == 0;
+
+        if (hardStopForRedLight)
         {
-            currentSpeed += acceleration * Time.deltaTime;
-            float maxSpeed = isDrifting ? maxForwardSpeed + driftSpeedBoost : maxForwardSpeed;
-            maxSpeed = isBoosting ? maxSpeed * boostMultiplier : maxSpeed;
-            currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
-        }
-        else if (reverse)
-        {
-            currentSpeed -= acceleration * Time.deltaTime;
-            currentSpeed = Mathf.Clamp(currentSpeed, -maxReverseSpeed, 0f);
+            currentSpeed = 0f;
+            rb.velocity = Vector2.zero;
         }
         else
         {
-            currentSpeed = Mathf.Lerp(currentSpeed, 0f, Time.deltaTime * 2f);
+            if (forward)
+            {
+                currentSpeed += acceleration * Time.deltaTime;
+                float maxSpeed = isDrifting ? maxForwardSpeed + driftSpeedBoost : maxForwardSpeed;
+                maxSpeed = isBoosting ? maxSpeed * boostMultiplier : maxSpeed;
+                currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
+            }
+            else if (reverse)
+            {
+                currentSpeed -= acceleration * Time.deltaTime;
+                currentSpeed = Mathf.Clamp(currentSpeed, -maxReverseSpeed, 0f);
+            }
+            else
+            {
+                currentSpeed = Mathf.Lerp(currentSpeed, 0f, Time.deltaTime * 2f);
+            }
         }
 
         steerInput = 0f;
@@ -93,18 +99,15 @@ public class PlayerCarController : MonoBehaviour
         else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
             steerInput = -1f;
 
-        // Stop boosting if time runs out
         if (isBoosting && Time.time >= boostEndTime)
-        {
             StopBoost();
-        }
     }
 
     void FixedUpdate()
     {
-        if (isBouncing)
+        if (isBouncing || isFrozen || hardStopForRedLight)
         {
-            rb.velocity = bounceDirection * bounceBackSpeed;
+            rb.velocity = Vector2.zero;
             return;
         }
 
@@ -125,21 +128,64 @@ public class PlayerCarController : MonoBehaviour
         rb.velocity = transform.up * currentSpeed;
     }
 
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        TrafficLightZone zone = other.GetComponent<TrafficLightZone>();
+        if (zone != null)
+        {
+            currentZone = zone;
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        TrafficLightZone zone = other.GetComponent<TrafficLightZone>();
+        if (zone != null && currentZone == zone)
+        {
+            currentZone = null;
+        }
+    }
+
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (isBouncing) return;
 
         if (collision.contacts.Length > 0)
         {
-            ContactPoint2D contact = collision.contacts[0];
-            bounceDirection = contact.normal;
+            GameObject other = collision.gameObject;
+
+            if (other.CompareTag("Pedestrian"))
+            {
+                currentSpeed = 0f;
+                rb.velocity = Vector2.zero;
+                rb.angularVelocity = 0f;
+
+                Debug.Log("Car hit a pedestrian!");
+
+                PedestrianWander pedestrian = other.GetComponent<PedestrianWander>();
+                if (pedestrian != null)
+                {
+                    pedestrian.OnHitByCar();
+                }
+
+                StartCoroutine(FreezeCar(1f)); // Freeze car for 1 second
+                return;
+            }
+
+            bounceDirection = collision.contacts[0].normal;
             currentSpeed = 0f;
             isBouncing = true;
-
-            HandleDamage(collision.gameObject);
-
             Invoke(nameof(StopBounce), 0.2f);
+            HandleDamage(other);
         }
+    }
+
+    IEnumerator FreezeCar(float duration)
+    {
+        isFrozen = true;
+        rb.velocity = Vector2.zero;
+        yield return new WaitForSeconds(duration);
+        isFrozen = false;
     }
 
     void HandleDamage(GameObject collidedObject)
