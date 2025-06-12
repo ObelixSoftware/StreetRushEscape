@@ -2,6 +2,8 @@
 
 public class PedestrianWander : MonoBehaviour
 {
+    //public GameController gameController;
+
     public float moveSpeed = 1f;
     private Vector2 moveDirection;
     private float changeDirectionTime = 2f;
@@ -10,10 +12,14 @@ public class PedestrianWander : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer spriteRenderer;
 
+    private GameObject gameController;
+
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        gameController = GameObject.FindGameObjectWithTag("GameController");
         PickRandomDirection();
     }
 
@@ -43,6 +49,9 @@ public class PedestrianWander : MonoBehaviour
     {
         if (isHit) return; // Avoid triggering twice
         isHit = true;
+
+        //Increase Pursuit
+        gameController.GetComponent<GameController>().IncreasePursuit(25f);
 
         // Stop movement
         moveDirection = Vector2.zero;
