@@ -2,36 +2,28 @@
 
 public class TrafficLightController : MonoBehaviour
 {
-    public SpriteRenderer lightRenderer;  // Assign in inspector
+    public SpriteRenderer lightRenderer; // Assign this in the Inspector
     public Sprite redLight;
     public Sprite yellowLight;
     public Sprite greenLight;
+    
+    private int state = 0; // 0 = Red, 1 = Green, 2 = Yellow
 
-    private float timer = 0f;
-    public float lightDuration = 3f;
-    private int state = 0;
-
-    void Update()
+    public void SetLight(int newState)
     {
-        timer += Time.deltaTime;
+        state = newState;
 
-        if (timer > lightDuration)
+        switch (state)
         {
-            timer = 0f;
-            state = (state + 1) % 3;
-
-            switch (state)
-            {
-                case 0:
-                    lightRenderer.sprite = redLight;
-                    break;
-                case 1:
-                    lightRenderer.sprite = greenLight;
-                    break;
-                case 2:
-                    lightRenderer.sprite = yellowLight;
-                    break;
-            }
+            case 0:
+                lightRenderer.sprite = redLight;
+                break;
+            case 1:
+                lightRenderer.sprite = greenLight;
+                break;
+            case 2:
+                lightRenderer.sprite = yellowLight;
+                break;
         }
     }
 
