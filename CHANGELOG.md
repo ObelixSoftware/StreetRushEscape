@@ -1,3 +1,27 @@
+commit 52574a792cebb7734896ae4104149f6d34f8638b
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Sun Jun 29 19:31:55 2025 +0200
+
+    Update .gitignore
+
+commit 214c61c05b1f8587cbf0510f82af22fce818a0f4
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Sun Jun 29 19:31:52 2025 +0200
+
+    Add border around the map
+
+commit 6515e0918a08190e06f44cc671b61b05d0e33632
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Sun Jun 29 08:49:14 2025 +0200
+
+    Add MiniMap
+
+commit 2fcfc6480a4d76e6450f42e03c859d12dcbd302b
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Tue Jun 17 08:52:14 2025 +0200
+
+    Add change log
+
 commit 85e99c1d333a2e1231282364ff37128c63f6e7cb
 Author: Lennie De Villiers <lennie.work@gmail.com>
 Date:   Tue Jun 17 08:50:10 2025 +0200
