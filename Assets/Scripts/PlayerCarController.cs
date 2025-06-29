@@ -34,10 +34,7 @@ public class PlayerCarController : MonoBehaviour
     private bool isBouncing = false;
     private Vector2 bounceDirection;
     private bool isDrifting = false;
-
-    private TrafficLightZone currentZone = null;
     private bool isFrozen = false;
-    private bool hardStopForRedLight = false;
 
     void Start()
     {
@@ -65,31 +62,21 @@ public class PlayerCarController : MonoBehaviour
         bool forward = Input.GetKey(KeyCode.Space);
         bool reverse = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
 
-        hardStopForRedLight = currentZone != null && currentZone.GetLightState() == 0;
-
-        if (hardStopForRedLight)
+        if (forward)
         {
-            currentSpeed = 0f;
-            rb.velocity = Vector2.zero;
+            currentSpeed += acceleration * Time.deltaTime;
+            float maxSpeed = isDrifting ? maxForwardSpeed + driftSpeedBoost : maxForwardSpeed;
+            maxSpeed = isBoosting ? maxSpeed * boostMultiplier : maxSpeed;
+            currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
+        }
+        else if (reverse)
+        {
+            currentSpeed -= acceleration * Time.deltaTime;
+            currentSpeed = Mathf.Clamp(currentSpeed, -maxReverseSpeed, 0f);
         }
         else
         {
-            if (forward)
-            {
-                currentSpeed += acceleration * Time.deltaTime;
-                float maxSpeed = isDrifting ? maxForwardSpeed + driftSpeedBoost : maxForwardSpeed;
-                maxSpeed = isBoosting ? maxSpeed * boostMultiplier : maxSpeed;
-                currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
-            }
-            else if (reverse)
-            {
-                currentSpeed -= acceleration * Time.deltaTime;
-                currentSpeed = Mathf.Clamp(currentSpeed, -maxReverseSpeed, 0f);
-            }
-            else
-            {
-                currentSpeed = Mathf.Lerp(currentSpeed, 0f, Time.deltaTime * 2f);
-            }
+            currentSpeed = Mathf.Lerp(currentSpeed, 0f, Time.deltaTime * 2f);
         }
 
         steerInput = 0f;
@@ -105,7 +92,7 @@ public class PlayerCarController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (isBouncing || isFrozen || hardStopForRedLight)
+        if (isBouncing || isFrozen)
         {
             rb.velocity = Vector2.zero;
             return;
@@ -128,24 +115,6 @@ public class PlayerCarController : MonoBehaviour
         rb.velocity = transform.up * currentSpeed;
     }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        TrafficLightZone zone = other.GetComponent<TrafficLightZone>();
-        if (zone != null)
-        {
-            currentZone = zone;
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D other)
-    {
-        TrafficLightZone zone = other.GetComponent<TrafficLightZone>();
-        if (zone != null && currentZone == zone)
-        {
-            currentZone = null;
-        }
-    }
-
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (isBouncing) return;
@@ -153,24 +122,6 @@ public class PlayerCarController : MonoBehaviour
         if (collision.contacts.Length > 0)
         {
             GameObject other = collision.gameObject;
-
-            if (other.CompareTag("Pedestrian"))
-            {
-                currentSpeed = 0f;
-                rb.velocity = Vector2.zero;
-                rb.angularVelocity = 0f;
-
-                Debug.Log("Car hit a pedestrian!");
-
-                PedestrianWander pedestrian = other.GetComponent<PedestrianWander>();
-                if (pedestrian != null)
-                {
-                    pedestrian.OnHitByCar();
-                }
-
-                StartCoroutine(FreezeCar(1f)); // Freeze car for 1 second
-                return;
-            }
 
             bounceDirection = collision.contacts[0].normal;
             currentSpeed = 0f;
