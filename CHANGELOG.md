@@ -1,3 +1,54 @@
+commit fe9eeaf0b5170a19b7a3fec00f10f56238c4db69
+Merge: 6aa41af 5c7973a
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Mon Jul 7 07:57:58 2025 +0200
+
+    Merge pull request #1 from ObelixSoftware/Game-Controller
+    
+    Added Game Controller
+
+commit 5c7973aa8ad0a4bbb7502e3d47f16ba9b9f9d1dd
+Merge: 61d8865 6aa41af
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Mon Jul 7 07:57:19 2025 +0200
+
+    Merge branch 'main' into Game-Controller
+
+commit 6aa41af86103ec2c9a9ecd7683a21d1944cd38f5
+Merge: 24bb3bd 37589dc
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Sun Jul 6 20:47:43 2025 +0200
+
+    Merge pull request #2 from ObelixSoftware/driving-rework
+
+commit 37589dc7b79f915c485ade69a352d5e71a27bdfd
+Author: Ol-Vinny <42969794+Ol-Vinny@users.noreply.github.com>
+Date:   Sat Jul 5 19:32:42 2025 -0600
+
+    Update SampleScene.unity
+
+commit 44adccab1eba968617c7e7ff138e0604fb695092
+Author: Ol-Vinny <42969794+Ol-Vinny@users.noreply.github.com>
+Date:   Sat Jul 5 19:22:46 2025 -0600
+
+    Physics based car controls
+    
+    Changed the car to be more reliant on vectors and control a bit smoother. Still needs collision rework for pedestrians.
+
+commit 24bb3bd4e135234e6969f426cdf27156dd3ad089
+Author: Ol-Vinny <42969794+Ol-Vinny@users.noreply.github.com>
+Date:   Fri Jul 4 14:01:12 2025 -0600
+
+    Added Game Controller
+    
+    Added just Game Controller code to the main, without hooks to pedestrian collision yet
+
+commit 04c5f759d1939f0b6707f74b7cf4ca69c0779e96
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Sun Jun 29 19:33:19 2025 +0200
+
+    Update CHANGELOG.md
+
 commit 52574a792cebb7734896ae4104149f6d34f8638b
 Author: Lennie De Villiers <lennie.work@gmail.com>
 Date:   Sun Jun 29 19:31:55 2025 +0200
@@ -27,6 +78,16 @@ Author: Lennie De Villiers <lennie.work@gmail.com>
 Date:   Tue Jun 17 08:50:10 2025 +0200
 
     Each traffic lights random change between red, yellow, green
+
+commit 61d88650e36ab1141c5e5334833e2f9372733131
+Author: Ol-Vinny <42969794+Ol-Vinny@users.noreply.github.com>
+Date:   Wed Jun 11 20:28:10 2025 -0600
+
+    Added Game Controller
+    
+    Added the game controller object and adjusted UI to display the new variables.
+    
+    Changed the pedestrians to a prefab
 
 commit a1a4479e53d9cc603117ad071f1a0d267a417ca9
 Author: Lennie De Villiers <lennie.work@gmail.com>
