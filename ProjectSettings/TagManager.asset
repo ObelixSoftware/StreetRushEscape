@@ -8,6 +8,7 @@ TagManager:
   - TrafficCone
   - Enemy
   - Pedestrian
+  - PedestrianZone
   layers:
   - Default
   - TransparentFX
