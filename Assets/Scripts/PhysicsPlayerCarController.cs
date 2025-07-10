@@ -11,34 +11,36 @@ public class PhysicsPlayerCarController : MonoBehaviour
     public float turnFactor = 3.5f;
     public float maxSpeed = 20;
 
-    //Local Variables
-    float accelerationInput = 0;
-    float steeringInput = 0;
-
-    float rotationAngle = 0;
-
-    float velocityVsUp = 0;
-
-    //Borrowed variables from OG controller
+    [Header("Health")]
     public int maxHealth = 100;
     public int collisionDamage = 20;
     private int currentHealth;
-
     public Slider healthBarSlider;
 
+    [Header("Explosion")]
+    public GameObject explosionPrefab;
+    public AudioClip explosionSound;
+    private AudioSource audioSource;
+
+    [Header("Boost")]
     public float boostStrength = 2.0f;
     private bool isBoosting = false;
 
     private bool isDrifting = false;
 
-    //Components
+    // Movement
+    float accelerationInput = 0;
+    float steeringInput = 0;
+    float rotationAngle = 0;
+    float velocityVsUp = 0;
+
     Rigidbody2D rb;
-    // Start is called before the first frame update
 
     void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();    
+        rb = GetComponent<Rigidbody2D>();
     }
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -47,13 +49,15 @@ public class PhysicsPlayerCarController : MonoBehaviour
             healthBarSlider.maxValue = maxHealth;
 
         UpdateHealthUI();
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
-
+        // Nothing here for now
     }
 
     void FixedUpdate()
@@ -62,78 +66,46 @@ public class PhysicsPlayerCarController : MonoBehaviour
         isBoosting = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
         ApplyEngineForce();
-
         ReduceCarDrift();
-
         ApplySteering();
     }
 
     void ApplyEngineForce()
     {
-        float boostFactor = 1.0f;
-        if (isBoosting)
-        {
-            boostFactor = 1.5f;
-        }
+        float boostFactor = isBoosting ? 1.5f : 1.0f;
 
-
-        //Calculate the forward aspect of velocity, used to determine current "speed" relative to the front of the car
         velocityVsUp = Vector2.Dot(transform.up, rb.velocity);
 
-        //Slow the car when the player isn't accelerating
         if (accelerationInput == 0)
-        {
             rb.drag = Mathf.Lerp(rb.drag, 3.0f, Time.fixedDeltaTime * 3);
-        }
         else
-        {
             rb.drag = 0;
-        }
 
-        //Stops acceleration when the player is already at max speed
         if (velocityVsUp > (maxSpeed * boostFactor) && accelerationInput > 0)
-        {
             return;
-        }
+
         if (velocityVsUp < (-maxSpeed * boostFactor) * 0.5f && accelerationInput < 0)
-        {
             return;
-        }
 
-
-
-            Vector2 engineForceVector = accelerationFactor * accelerationInput * transform.up * boostFactor;
-
+        Vector2 engineForceVector = accelerationFactor * accelerationInput * transform.up * boostFactor;
         rb.AddForce(engineForceVector, ForceMode2D.Force);
     }
 
     void ApplySteering()
     {
-        float minTurningSpeedFactor = (rb.velocity.magnitude / 8);
-        minTurningSpeedFactor = Mathf.Clamp01(minTurningSpeedFactor);
+        float minTurningSpeedFactor = Mathf.Clamp01(rb.velocity.magnitude / 8);
 
         if (velocityVsUp < 0)
-        {
             steeringInput = -steeringInput;
-        }
 
         rotationAngle -= steeringInput * turnFactor * minTurningSpeedFactor;
-
-        
-
         rb.MoveRotation(rotationAngle);
     }
 
     void ReduceCarDrift()
     {
-        if (isDrifting)
-        {
-            driftFactor = 0.95f;
-        }
-        else
-        {
-            driftFactor = 0.4f;
-        }
+        driftFactor = isDrifting ? 0.95f : 0.4f;
+
         Vector2 forwardVelocity = transform.up * Vector2.Dot(rb.velocity, transform.up);
         Vector2 rightVelocity = transform.right * Vector2.Dot(rb.velocity, transform.right);
 
@@ -143,22 +115,27 @@ public class PhysicsPlayerCarController : MonoBehaviour
     public void SetInputVector(Vector2 inputVector)
     {
         steeringInput = inputVector.x;
-        accelerationInput = inputVector.y; 
+        accelerationInput = inputVector.y;
     }
 
-    //Functions from original car controller
     void HandleDamage(GameObject collidedObject)
     {
         currentHealth -= collisionDamage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         UpdateHealthUI();
-
         Debug.Log($"Car hit! Current health: {currentHealth}");
 
         if (currentHealth <= 0)
         {
             Debug.Log("Car destroyed!");
+
+            if (explosionPrefab != null)
+                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+
+            if (explosionSound != null)
+                audioSource.PlayOneShot(explosionSound);
+
             gameObject.SetActive(false);
         }
     }
@@ -173,8 +150,6 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        HandleDamage(collision.gameObject);
     }
-
-
-
 }
