@@ -27,6 +27,7 @@ public class PhysicsPlayerCarController : MonoBehaviour
     private bool isBoosting = false;
 
     private bool isDrifting = false;
+    private bool isDestroyed = false;
 
     // Movement
     float accelerationInput = 0;
@@ -62,12 +63,26 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isDestroyed) return;
+
         isDrifting = Input.GetKey(KeyCode.Space);
         isBoosting = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
         ApplyEngineForce();
         ReduceCarDrift();
         ApplySteering();
+
+        float speedPercent = rb.velocity.magnitude / maxSpeed;
+        SoundManager.Instance.UpdateEngineSound(speedPercent);
+
+        if (isDrifting && rb.velocity.magnitude > 1f)
+        {
+            SoundManager.Instance.PlayDrift();
+        }
+        else
+        {
+            SoundManager.Instance.StopDrift();
+        }
     }
 
     void ApplyEngineForce()
@@ -120,6 +135,8 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
     void HandleDamage(GameObject collidedObject)
     {
+        if (isDestroyed) return;
+
         currentHealth -= collisionDamage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
@@ -128,13 +145,18 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
         if (currentHealth <= 0)
         {
+            isDestroyed = true;
+
             Debug.Log("Car destroyed!");
 
-            if (explosionPrefab != null)
-                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            SoundManager.Instance.StopDrift();
+            SoundManager.Instance.StopEngine();
+            SoundManager.Instance.PlayExplosion();
 
-            if (explosionSound != null)
-                audioSource.PlayOneShot(explosionSound);
+            if (explosionPrefab != null)
+            {
+                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            }
 
             gameObject.SetActive(false);
         }
