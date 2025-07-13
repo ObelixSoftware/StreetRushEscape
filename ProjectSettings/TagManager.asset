@@ -9,6 +9,8 @@ TagManager:
   - Enemy
   - Pedestrian
   - PedestrianZone
+  - Car
+  - CopManager
   layers:
   - Default
   - TransparentFX

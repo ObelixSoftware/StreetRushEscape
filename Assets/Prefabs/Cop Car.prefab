@@ -175,7 +175,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   driftFactor: 0.4
-  accelerationFactor: 30
-  turnFactor: 3.5
+  accelerationFactor: 15
+  turnFactor: 4
   maxSpeed: 20
   playerTransform: {fileID: 0}
+  isActive: 0

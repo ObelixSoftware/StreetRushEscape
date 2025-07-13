@@ -12,16 +12,6 @@ public class CopDriveHandler : MonoBehaviour
 
     public Transform playerTransform;
 
-    //[Header("Health")]
-    //public int maxHealth = 100;
-    //public int collisionDamage = 20;
-    //private int currentHealth;
-    //public Slider healthBarSlider;
-
-    //[Header("Explosion")]
-    //public GameObject explosionPrefab;
-    //public AudioClip explosionSound;
-    //private AudioSource audioSource;
 
     // Movement
     float steeringInput = 0;
@@ -30,6 +20,29 @@ public class CopDriveHandler : MonoBehaviour
 
     Rigidbody2D rb;
 
+    //A static list to store the all active cops
+    public static List<CopDriveHandler> Cops = new List<CopDriveHandler>();
+    public bool isActive;
+
+    void OnEnable()
+    {
+        if (!Cops.Contains(this))
+            Cops.Add(this);
+
+        isActive = true;
+
+        if (rb != null)
+        {
+            rb.velocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+        }
+    }
+
+    void OnDisable()
+    {
+        isActive = false;
+    }
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -37,7 +50,6 @@ public class CopDriveHandler : MonoBehaviour
     
     void Start()
     {
-        rotationAngle = rb.rotation;
 
         //Find player car
         if (playerTransform == null)
@@ -46,6 +58,13 @@ public class CopDriveHandler : MonoBehaviour
             if (playerObj != null)
                 playerTransform = playerObj.transform;
         }
+    }
+
+    public void SetInitialRotation(float angle)
+    {
+        rotationAngle = angle;
+        if (rb != null)
+            rb.MoveRotation(angle);
     }
 
     // Update is called once per frame
