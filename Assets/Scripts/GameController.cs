@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-    public Slider pursuitSlider;
-    public Slider timeSlider;
+    //public Slider pursuitSlider;
+    //public Slider timeSlider;
 
     public float pursuitLevel = 0f;
     public int score = 0;
@@ -37,8 +37,13 @@ public class GameController : MonoBehaviour
         {
             pursuitLevel -= Time.deltaTime;
         }
-        timeSlider.value = globalTime;
-        pursuitSlider.value = pursuitLevel;
+        //timeSlider.value = globalTime;
+        //pursuitSlider.value = pursuitLevel;
+
+        if (Input.GetKey(KeyCode.P))
+        {
+            pursuitLevel += 0.1f;
+        }
     }
 
     void GlobalTimerFinished()
