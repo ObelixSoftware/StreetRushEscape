@@ -1,3 +1,58 @@
+commit 5634bd3158b63399855152605f76005708430b0e
+Merge: 2548352 1289881
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Sat Jul 12 15:39:14 2025 +0200
+
+    Merge pull request #6 from ObelixSoftware/origin/SoundManager
+
+commit 128988168138a323b5f0940a2e7dc4b0488376f1
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Sat Jul 12 14:51:40 2025 +0200
+
+    AddedSoundManager
+
+commit 25483522e7e425b91fa4fea1a3c566b434f2b903
+Merge: 8ae216c ede3232
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Sat Jul 12 11:07:35 2025 +0200
+
+    Merge pull request #5 from ObelixSoftware/origin/car-crash-animation-extended
+
+commit ede3232285f2f6929f9444130213fce13b799c60
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Fri Jul 11 10:06:03 2025 +0200
+
+    ExtendedCrashAnimForCar
+    
+    Fixed some of the prefab links - extended the animation for the explotion
+
+commit 8ae216cdd6e8c859e828dac2adadb915db2a0163
+Merge: 1ae3c84 d0f8c3f
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Thu Jul 10 16:18:39 2025 +0200
+
+    Merge pull request #4 from ObelixSoftware/origin/car-crash-animation
+
+commit d0f8c3fa8d7bd8ce7fd19667dd63995b4691a285
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Thu Jul 10 15:46:36 2025 +0200
+
+    Explotion/sound
+    
+    Importing of the visuals and sound - cleanup of code
+
+commit 1ae3c84877dcdf6a9ef2548ca551ade4ce583557
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Tue Jul 8 10:15:30 2025 +0200
+
+    PoliceCarAsset
+
+commit 98f5dabcdec77405338cd582020fc4154790dfbd
+Author: Lennie De Villiers <lennie.work@gmail.com>
+Date:   Mon Jul 7 08:00:21 2025 +0200
+
+    Update CHANGELOG.md
+
 commit fe9eeaf0b5170a19b7a3fec00f10f56238c4db69
 Merge: 6aa41af 5c7973a
 Author: Lennie De Villiers <lennie.work@gmail.com>
