@@ -17,17 +17,19 @@ public class PhysicsPlayerCarController : MonoBehaviour
     private int currentHealth;
     public Slider healthBarSlider;
 
-    [Header("Explosion")]
-    public GameObject explosionPrefab;
-    public AudioClip explosionSound;
-    private AudioSource audioSource;
-
     [Header("Boost")]
     public float boostStrength = 2.0f;
     private bool isBoosting = false;
 
+    [Header("Drift Smoke Spawn Point")]
+    public Transform driftSmokeSpawnPoint;
+
     private bool isDrifting = false;
     private bool isDestroyed = false;
+
+    // Drift smoke timing
+    private float driftSmokeTimer = 0f;
+    public float driftSmokeInterval = 0.05f; // How often to spawn smoke
 
     // Movement
     float accelerationInput = 0;
@@ -36,6 +38,7 @@ public class PhysicsPlayerCarController : MonoBehaviour
     float velocityVsUp = 0;
 
     Rigidbody2D rb;
+    AudioSource audioSource;
 
     void Awake()
     {
@@ -75,13 +78,26 @@ public class PhysicsPlayerCarController : MonoBehaviour
         float speedPercent = rb.velocity.magnitude / maxSpeed;
         SoundManager.Instance.UpdateEngineSound(speedPercent);
 
+        // Drifting sound + effect logic
         if (isDrifting && rb.velocity.magnitude > 1f)
         {
             SoundManager.Instance.PlayDrift();
+
+            driftSmokeTimer += Time.fixedDeltaTime;
+            if (driftSmokeTimer >= driftSmokeInterval)
+            {
+                driftSmokeTimer = 0f;
+
+                if (driftSmokeSpawnPoint != null)
+                {
+                    VisualEffectsManager.Instance.StartDriftSmoke(driftSmokeSpawnPoint.position);
+                }
+            }
         }
         else
         {
             SoundManager.Instance.StopDrift();
+            driftSmokeTimer = 0f; // Reset timer so it doesn't queue smokes
         }
     }
 
@@ -153,11 +169,7 @@ public class PhysicsPlayerCarController : MonoBehaviour
             SoundManager.Instance.StopEngine();
             SoundManager.Instance.PlayExplosion();
 
-            if (explosionPrefab != null)
-            {
-                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-            }
-
+            VisualEffectsManager.Instance.PlayExplosion(transform.position);
             gameObject.SetActive(false);
         }
     }
