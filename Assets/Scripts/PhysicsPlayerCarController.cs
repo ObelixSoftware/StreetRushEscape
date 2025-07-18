@@ -39,6 +39,7 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
     Rigidbody2D rb;
     AudioSource audioSource;
+    public GameController gameController;
 
     void Awake()
     {
@@ -126,16 +127,20 @@ public class PhysicsPlayerCarController : MonoBehaviour
     {
         float minTurningSpeedFactor = Mathf.Clamp01(rb.velocity.magnitude / 8);
 
-        if (velocityVsUp < 0)
-            steeringInput = -steeringInput;
+        float directionMultiplier = (velocityVsUp >= 0) ? 1f : -1f;
 
-        rotationAngle -= steeringInput * turnFactor * minTurningSpeedFactor;
+        rotationAngle -= steeringInput * turnFactor * minTurningSpeedFactor * directionMultiplier;
         rb.MoveRotation(rotationAngle);
     }
 
     void ReduceCarDrift()
     {
-        driftFactor = isDrifting ? 0.95f : 0.4f;
+        //Controlling variables for gradual transition in and out of drifting
+        float targetDriftFactor = isDrifting ? 0.95f : 0.4f;
+        float transitionSpeed = 5f;
+
+        //driftFactor = isDrifting ? 0.95f : 0.4f;
+        driftFactor = Mathf.Lerp(driftFactor, targetDriftFactor, Time.fixedDeltaTime * transitionSpeed);
 
         Vector2 forwardVelocity = transform.up * Vector2.Dot(rb.velocity, transform.up);
         Vector2 rightVelocity = transform.right * Vector2.Dot(rb.velocity, transform.right);
@@ -184,6 +189,16 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        if (collision.gameObject.TryGetComponent(out PedestrianWalker pedestrian))
+        {
+           bool pedestrianKilled = pedestrian.Kill();
+
+            if (pedestrianKilled)
+                gameController.IncreasePursuit(15f);
+        }
+
+
+
         HandleDamage(collision.gameObject);
     }
 }
