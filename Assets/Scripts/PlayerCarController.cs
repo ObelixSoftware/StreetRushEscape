@@ -21,8 +21,9 @@ public class PlayerCarController : MonoBehaviour
     public float boostDuration = 2f;
     private bool isBoosting = false;
     private float boostEndTime = 0f;
-
+    [Header("Health")]
     public int maxHealth = 100;
+
     public int collisionDamage = 20;
     private int currentHealth;
 
@@ -33,8 +34,20 @@ public class PlayerCarController : MonoBehaviour
     private Rigidbody2D rb;
     private bool isBouncing = false;
     private Vector2 bounceDirection;
+
+    [Header("Drift Smoke Spawn Point")]
+    public Transform driftSmokeSpawnPoint;
     private bool isDrifting = false;
+    private bool isDestroyed = false;
     private bool isFrozen = false;
+
+    private AudioSource audioSource;
+
+    // Drift smoke timing
+    private float driftSmokeTimer = 0f;
+    public float driftSmokeInterval = 0.05f; // How often to spawn smoke
+
+    private float maxSpeed = 0;
 
     void Start()
     {
@@ -48,6 +61,10 @@ public class PlayerCarController : MonoBehaviour
             healthBarSlider.maxValue = maxHealth;
 
         UpdateHealthUI();
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     void Update()
@@ -59,13 +76,13 @@ public class PlayerCarController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.X) && !isBoosting)
             StartBoost();
 
-        bool forward = Input.GetKey(KeyCode.Space);
+        bool forward = Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
         bool reverse = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
 
         if (forward)
         {
             currentSpeed += acceleration * Time.deltaTime;
-            float maxSpeed = isDrifting ? maxForwardSpeed + driftSpeedBoost : maxForwardSpeed;
+            maxSpeed = isDrifting ? maxForwardSpeed + driftSpeedBoost : maxForwardSpeed;
             maxSpeed = isBoosting ? maxSpeed * boostMultiplier : maxSpeed;
             currentSpeed = Mathf.Clamp(currentSpeed, 0f, maxSpeed);
         }
@@ -100,6 +117,9 @@ public class PlayerCarController : MonoBehaviour
 
         rb.drag = isDrifting ? driftDrag : normalDrag;
 
+        float speedPercent = rb.velocity.magnitude / maxSpeed;
+        SoundManager.Instance.UpdateEngineSound(speedPercent);
+
         if (Mathf.Abs(currentSpeed) > 0.1f && steerInput != 0f)
         {
             float direction = currentSpeed >= 0 ? 1f : -1f;
@@ -112,7 +132,32 @@ public class PlayerCarController : MonoBehaviour
             rb.MoveRotation(Mathf.LerpAngle(rb.rotation, snappedRotation, Time.fixedDeltaTime * 5f));
         }
 
+        diftingEffect();
+
         rb.velocity = transform.up * currentSpeed;
+    }
+
+    void diftingEffect() {
+        if (isDrifting && rb.velocity.magnitude > 1f)
+        {
+            SoundManager.Instance.PlayDrift();
+
+            driftSmokeTimer += Time.fixedDeltaTime;
+            if (driftSmokeTimer >= driftSmokeInterval)
+            {
+                driftSmokeTimer = 0f;
+
+                if (driftSmokeSpawnPoint != null)
+                {
+                    VisualEffectsManager.Instance.StartDriftSmoke(driftSmokeSpawnPoint.position);
+                }
+            }
+        }
+        else
+        {
+            SoundManager.Instance.StopDrift();
+            driftSmokeTimer = 0f;
+        }  
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -127,7 +172,14 @@ public class PlayerCarController : MonoBehaviour
             currentSpeed = 0f;
             isBouncing = true;
             Invoke(nameof(StopBounce), 0.2f);
-            HandleDamage(other);
+            //HandleDamage(other);
+        }
+        if (collision.gameObject.TryGetComponent(out PedestrianWalker pedestrian))
+        {
+           bool pedestrianKilled = pedestrian.Kill();
+
+            //if (pedestrianKilled)
+            //    gameController.IncreasePursuit(15f);
         }
     }
 
@@ -141,16 +193,27 @@ public class PlayerCarController : MonoBehaviour
 
     void HandleDamage(GameObject collidedObject)
     {
+        if (isDestroyed) return;
+
         currentHealth -= collisionDamage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         UpdateHealthUI();
 
-        Debug.Log($"Car hit! Current health: {currentHealth}");
+        Debug.Log($"[PlayerController] Car hit! Current health: {currentHealth}");
 
         if (currentHealth <= 0)
         {
+            isDestroyed = true;
+
             Debug.Log("Car destroyed!");
+
+            SoundManager.Instance.StopDrift();
+            SoundManager.Instance.StopEngine();
+            SoundManager.Instance.PlayExplosion();
+
+            VisualEffectsManager.Instance.PlayExplosion(transform.position);
+
             gameObject.SetActive(false);
         }
     }

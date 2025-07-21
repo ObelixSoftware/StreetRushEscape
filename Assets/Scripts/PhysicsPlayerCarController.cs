@@ -162,7 +162,8 @@ public class PhysicsPlayerCarController : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
         UpdateHealthUI();
-        Debug.Log($"Car hit! Current health: {currentHealth}");
+        
+        Debug.Log($"[PhysicsPlayerCarController] Car hit! Current health: {currentHealth}");
 
         if (currentHealth <= 0)
         {
@@ -197,8 +198,6 @@ public class PhysicsPlayerCarController : MonoBehaviour
                 gameController.IncreasePursuit(15f);
         }
 
-
-
-        HandleDamage(collision.gameObject);
+        //HandleDamage(collision.gameObject);
     }
 }
