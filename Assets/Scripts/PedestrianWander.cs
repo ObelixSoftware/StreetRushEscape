@@ -14,7 +14,6 @@ public class PedestrianWander : MonoBehaviour
 
     private GameObject gameController;
 
-
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -50,7 +49,7 @@ public class PedestrianWander : MonoBehaviour
         if (isHit) return; // Avoid triggering twice
         isHit = true;
 
-        //Increase Pursuit
+        // Increase pursuit level
         gameController.GetComponent<GameController>().IncreasePursuit(25f);
 
         // Stop movement
@@ -67,6 +66,9 @@ public class PedestrianWander : MonoBehaviour
         if (col != null)
             col.enabled = false;
 
+        // Play death sound
+        SoundManager.Instance?.PlayPedestrianDeath();
+
         // Destroy after 5 seconds
         Invoke(nameof(DestroyPedestrian), 5f);
     }
@@ -76,4 +78,3 @@ public class PedestrianWander : MonoBehaviour
         Destroy(gameObject);
     }
 }
-

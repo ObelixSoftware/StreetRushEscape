@@ -78,6 +78,9 @@ public class PedestrianWalker : MonoBehaviour
 
         gameObject.layer = LayerMask.NameToLayer("DeadPedestrian");
 
+        // Play death sound
+        SoundManager.Instance?.PlayPedestrianDeath();
+
         return true;
     }
 
