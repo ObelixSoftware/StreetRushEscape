@@ -24,6 +24,23 @@ public class PedestrianSpawner : MonoBehaviour
         if (pedestrianVariants.Length == 0) return;
 
         int randomIndex = Random.Range(0, pedestrianVariants.Length);
-        GameObject pedestrian = Instantiate(pedestrianVariants[randomIndex], transform.position, Quaternion.identity);
+
+        // Force Z = 0
+        Vector3 spawnPosition = new Vector3(transform.position.x, transform.position.y, 0f);
+
+        GameObject pedestrian = Instantiate(pedestrianVariants[randomIndex], spawnPosition, Quaternion.identity);
+
+        // Parent to spawner (optional, helps with scene organization)
+        pedestrian.transform.SetParent(transform);
+
+        // Optional: ensure it's visible by correcting sorting layer/order
+        SpriteRenderer sr = pedestrian.GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            sr.sortingLayerName = "Default"; // Or "Characters" if you have that layer
+            sr.sortingOrder = 5;
+        }
+
+        Debug.Log($"Spawned pedestrian: {pedestrian.name} at {spawnPosition}");
     }
 }
