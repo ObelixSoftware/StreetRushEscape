@@ -8,15 +8,15 @@ public class SoundManager : MonoBehaviour
     public AudioClip engineSound;
     public AudioClip driftSound;
     public AudioClip explosionSound;
+    public AudioClip pedestrianDieSound;  
 
     [Header("Audio Sources")]
     public AudioSource engineAudioSource;
     public AudioSource driftAudioSource;
     public AudioSource explosionAudioSource;
-
+    public AudioSource pedestrianHitSource; 
     void Awake()
     {
-        // Singleton setup
         if (Instance == null)
         {
             Instance = this;
@@ -59,6 +59,14 @@ public class SoundManager : MonoBehaviour
             explosionAudioSource.playOnAwake = false;
         }
 
+        // Set up pedestrian hit audio source
+        if (pedestrianHitSource == null)
+        {
+            pedestrianHitSource = gameObject.AddComponent<AudioSource>();
+            pedestrianHitSource.loop = false;
+            pedestrianHitSource.playOnAwake = false;
+        }
+
         if (engineSound != null)
             engineAudioSource.Play();
     }
@@ -95,5 +103,13 @@ public class SoundManager : MonoBehaviour
     {
         if (explosionAudioSource != null)
             explosionAudioSource.PlayOneShot(explosionSound);
+    }
+
+    public void PlayPedestrianHitSound()
+    {
+        if (pedestrianHitSource != null && pedestrianDieSound != null)
+        {
+            pedestrianHitSource.PlayOneShot(pedestrianDieSound);
+        }
     }
 }

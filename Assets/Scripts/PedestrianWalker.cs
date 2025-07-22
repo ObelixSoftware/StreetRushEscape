@@ -21,7 +21,7 @@ public class PedestrianWalker : MonoBehaviour
     private float respawnDelay = 5f;
 
     private SpriteRenderer spriteRenderer;
-    private Collider2D collider;
+    private new Collider2D collider;  
 
     void Start()
     {
@@ -68,7 +68,7 @@ public class PedestrianWalker : MonoBehaviour
 
     public bool Kill()
     {
-        if (isDead) 
+        if (isDead)
             return false;
 
         isDead = true;
@@ -77,6 +77,8 @@ public class PedestrianWalker : MonoBehaviour
         respawnTimer = 0f;
 
         gameObject.layer = LayerMask.NameToLayer("DeadPedestrian");
+
+        collider.enabled = false;
 
         return true;
     }

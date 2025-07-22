@@ -58,6 +58,15 @@ public class PhysicsPlayerCarController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
+
+        if (gameController == null)
+        {
+            gameController = GameObject.FindObjectOfType<GameController>();
+            if (gameController == null)
+            {
+                Debug.LogError("GameController not found in scene! Please assign it in the inspector or add one to the scene.");
+            }
+        }
     }
 
     void Update()
@@ -191,13 +200,18 @@ public class PhysicsPlayerCarController : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent(out PedestrianWalker pedestrian))
         {
-           bool pedestrianKilled = pedestrian.Kill();
+            bool pedestrianKilled = pedestrian.Kill();
 
             if (pedestrianKilled)
-                gameController.IncreasePursuit(15f);
+            {
+                if (gameController != null)
+                    gameController.IncreasePursuit(15f);
+                else
+                    Debug.LogWarning("gameController is null; cannot IncreasePursuit.");
+
+                SoundManager.Instance.PlayPedestrianHitSound(); // Play pedestrian hit sound
+            }
         }
-
-
 
         HandleDamage(collision.gameObject);
     }
