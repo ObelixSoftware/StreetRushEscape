@@ -8,18 +8,25 @@ public class SoundManager : MonoBehaviour
     public AudioClip engineSound;
     public AudioClip driftSound;
     public AudioClip explosionSound;
+    public AudioClip backgroundMusic;  // General background music
+    public AudioClip chaseMusic;       // Police chase music
 
     [Header("Audio Sources")]
     public AudioSource engineAudioSource;
     public AudioSource driftAudioSource;
     public AudioSource explosionAudioSource;
 
+    public AudioSource backgroundMusicSource;  // General background music
+    public AudioSource chaseMusicSource;       // Police chase music
+
+    private bool isChaseMusicPlaying = false;
+
     void Awake()
     {
-        // Singleton setup
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -27,12 +34,48 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
-        DontDestroyOnLoad(gameObject);
+        // Setup music audio sources
+        SetupMusicAudioSources();
+    }
+
+    void SetupMusicAudioSources()
+    {
+        // Setup background music source
+        if (backgroundMusicSource == null)
+        {
+            backgroundMusicSource = gameObject.AddComponent<AudioSource>();
+            backgroundMusicSource.loop = true;
+            backgroundMusicSource.playOnAwake = false;
+            backgroundMusicSource.volume = 0.5f;
+            backgroundMusicSource.clip = backgroundMusic;
+        }
+
+        // Setup chase music source
+        if (chaseMusicSource == null)
+        {
+            chaseMusicSource = gameObject.AddComponent<AudioSource>();
+            chaseMusicSource.loop = true;
+            chaseMusicSource.playOnAwake = false;
+            chaseMusicSource.volume = 0.5f;
+            chaseMusicSource.clip = chaseMusic;
+        }
     }
 
     void Start()
     {
-        // Set up engine audio source
+        SetupEngineAudio();
+        SetupDriftAudio();
+        SetupExplosionAudio();
+
+        PlayBackgroundMusic();  // Start with general music
+
+        // Apply saved music volume
+        float savedVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
+        SetMusicVolume(savedVolume);
+    }
+
+    void SetupEngineAudio()
+    {
         if (engineAudioSource == null)
         {
             engineAudioSource = gameObject.AddComponent<AudioSource>();
@@ -41,7 +84,12 @@ public class SoundManager : MonoBehaviour
             engineAudioSource.playOnAwake = false;
         }
 
-        // Set up drift audio source
+        if (engineSound != null)
+            engineAudioSource.Play();
+    }
+
+    void SetupDriftAudio()
+    {
         if (driftAudioSource == null)
         {
             driftAudioSource = gameObject.AddComponent<AudioSource>();
@@ -49,8 +97,10 @@ public class SoundManager : MonoBehaviour
             driftAudioSource.clip = driftSound;
             driftAudioSource.playOnAwake = false;
         }
+    }
 
-        // Set up explosion audio source
+    void SetupExplosionAudio()
+    {
         if (explosionAudioSource == null)
         {
             explosionAudioSource = gameObject.AddComponent<AudioSource>();
@@ -58,9 +108,46 @@ public class SoundManager : MonoBehaviour
             explosionAudioSource.clip = explosionSound;
             explosionAudioSource.playOnAwake = false;
         }
+    }
 
-        if (engineSound != null)
-            engineAudioSource.Play();
+    public void PlayBackgroundMusic()
+    {
+        if (backgroundMusicSource != null && !backgroundMusicSource.isPlaying)
+        {
+            backgroundMusicSource.Play();
+        }
+        // Stop chase music if playing
+        if (chaseMusicSource != null && chaseMusicSource.isPlaying)
+        {
+            chaseMusicSource.Stop();
+            isChaseMusicPlaying = false;
+        }
+    }
+
+    public void PlayChaseMusic()
+    {
+        if (chaseMusicSource != null && !chaseMusicSource.isPlaying)
+        {
+            chaseMusicSource.Play();
+            isChaseMusicPlaying = true;
+        }
+        // Stop background music if playing
+        if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
+        {
+            backgroundMusicSource.Stop();
+        }
+    }
+
+    public void StopMusic()
+    {
+        if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
+        {
+            backgroundMusicSource.Stop();
+        }
+        if (chaseMusicSource != null && chaseMusicSource.isPlaying)
+        {
+            chaseMusicSource.Stop();
+        }
     }
 
     public void UpdateEngineSound(float speedPercent)
@@ -95,5 +182,15 @@ public class SoundManager : MonoBehaviour
     {
         if (explosionAudioSource != null)
             explosionAudioSource.PlayOneShot(explosionSound);
+    }
+
+    // 🔊 This method allows main menu slider to adjust volume for music only
+    public void SetMusicVolume(float volume)
+    {
+        if (backgroundMusicSource != null)
+            backgroundMusicSource.volume = volume;
+
+        if (chaseMusicSource != null)
+            chaseMusicSource.volume = volume;
     }
 }
