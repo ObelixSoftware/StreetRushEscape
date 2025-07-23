@@ -8,17 +8,23 @@ public class SoundManager : MonoBehaviour
     public AudioClip engineSound;
     public AudioClip driftSound;
     public AudioClip explosionSound;
-    public AudioClip pedestrianHitSound;  // Added pedestrian hit sound clip
+    public AudioClip backgroundMusic;         // General background music
+    public AudioClip chaseMusic;              // Police chase music
+    public AudioClip pedestrianHitSound;      // Pedestrian hit sound
 
     [Header("Audio Sources")]
     public AudioSource engineAudioSource;
     public AudioSource driftAudioSource;
     public AudioSource explosionAudioSource;
-    private AudioSource pedestrianHitSource; // Added AudioSource for pedestrian hit
+    public AudioSource backgroundMusicSource;
+    public AudioSource chaseMusicSource;
+
+    private AudioSource pedestrianHitSource; // For hit sound
+
+    private bool isChaseMusicPlaying = false;
 
     void Awake()
     {
-        // Singleton setup
         if (Instance == null)
         {
             Instance = this;
@@ -29,11 +35,25 @@ public class SoundManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+
+        SetupMusicAudioSources();
+        SetupPedestrianHitAudio();
     }
 
     void Start()
     {
-        // Set up engine audio source
+        SetupEngineAudio();
+        SetupDriftAudio();
+        SetupExplosionAudio();
+
+        PlayBackgroundMusic();  // Start with general music
+
+        float savedVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
+        SetMusicVolume(savedVolume);
+    }
+
+    void SetupEngineAudio()
+    {
         if (engineAudioSource == null)
         {
             engineAudioSource = gameObject.AddComponent<AudioSource>();
@@ -42,7 +62,12 @@ public class SoundManager : MonoBehaviour
             engineAudioSource.playOnAwake = false;
         }
 
-        // Set up drift audio source
+        if (engineSound != null)
+            engineAudioSource.Play();
+    }
+
+    void SetupDriftAudio()
+    {
         if (driftAudioSource == null)
         {
             driftAudioSource = gameObject.AddComponent<AudioSource>();
@@ -50,8 +75,10 @@ public class SoundManager : MonoBehaviour
             driftAudioSource.clip = driftSound;
             driftAudioSource.playOnAwake = false;
         }
+    }
 
-        // Set up explosion audio source
+    void SetupExplosionAudio()
+    {
         if (explosionAudioSource == null)
         {
             explosionAudioSource = gameObject.AddComponent<AudioSource>();
@@ -59,8 +86,31 @@ public class SoundManager : MonoBehaviour
             explosionAudioSource.clip = explosionSound;
             explosionAudioSource.playOnAwake = false;
         }
+    }
 
-        // Setup pedestrian hit audio source
+    void SetupMusicAudioSources()
+    {
+        if (backgroundMusicSource == null)
+        {
+            backgroundMusicSource = gameObject.AddComponent<AudioSource>();
+            backgroundMusicSource.loop = true;
+            backgroundMusicSource.playOnAwake = false;
+            backgroundMusicSource.volume = 0.5f;
+            backgroundMusicSource.clip = backgroundMusic;
+        }
+
+        if (chaseMusicSource == null)
+        {
+            chaseMusicSource = gameObject.AddComponent<AudioSource>();
+            chaseMusicSource.loop = true;
+            chaseMusicSource.playOnAwake = false;
+            chaseMusicSource.volume = 0.5f;
+            chaseMusicSource.clip = chaseMusic;
+        }
+    }
+
+    void SetupPedestrianHitAudio()
+    {
         if (pedestrianHitSource == null)
         {
             pedestrianHitSource = gameObject.AddComponent<AudioSource>();
@@ -68,9 +118,46 @@ public class SoundManager : MonoBehaviour
             pedestrianHitSource.playOnAwake = false;
             pedestrianHitSource.clip = pedestrianHitSound;
         }
+    }
 
-        if (engineSound != null)
-            engineAudioSource.Play();
+    public void PlayBackgroundMusic()
+    {
+        if (backgroundMusicSource != null && !backgroundMusicSource.isPlaying)
+        {
+            backgroundMusicSource.Play();
+        }
+
+        if (chaseMusicSource != null && chaseMusicSource.isPlaying)
+        {
+            chaseMusicSource.Stop();
+            isChaseMusicPlaying = false;
+        }
+    }
+
+    public void PlayChaseMusic()
+    {
+        if (chaseMusicSource != null && !chaseMusicSource.isPlaying)
+        {
+            chaseMusicSource.Play();
+            isChaseMusicPlaying = true;
+        }
+
+        if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
+        {
+            backgroundMusicSource.Stop();
+        }
+    }
+
+    public void StopMusic()
+    {
+        if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
+        {
+            backgroundMusicSource.Stop();
+        }
+        if (chaseMusicSource != null && chaseMusicSource.isPlaying)
+        {
+            chaseMusicSource.Stop();
+        }
     }
 
     public void UpdateEngineSound(float speedPercent)
@@ -113,5 +200,14 @@ public class SoundManager : MonoBehaviour
         {
             pedestrianHitSource.PlayOneShot(pedestrianHitSound);
         }
+    }
+
+    public void SetMusicVolume(float volume)
+    {
+        if (backgroundMusicSource != null)
+            backgroundMusicSource.volume = volume;
+
+        if (chaseMusicSource != null)
+            chaseMusicSource.volume = volume;
     }
 }

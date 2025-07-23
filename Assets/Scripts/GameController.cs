@@ -15,6 +15,8 @@ public class GameController : MonoBehaviour
     public float startingTime = 600;
     public float globalTime;
 
+    private bool isChaseMusicPlaying = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -37,12 +39,25 @@ public class GameController : MonoBehaviour
         {
             pursuitLevel -= Time.deltaTime;
         }
+
         timeSlider.value = globalTime;
         pursuitSlider.value = pursuitLevel;
 
         if (Input.GetKey(KeyCode.P))
         {
             pursuitLevel += 0.1f;
+        }
+
+        // Check if music should switch based on pursuit level
+        if (pursuitLevel >= 30f && !isChaseMusicPlaying && SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayChaseMusic();
+            isChaseMusicPlaying = true;
+        }
+        else if (pursuitLevel < 30f && isChaseMusicPlaying && SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayBackgroundMusic();
+            isChaseMusicPlaying = false;
         }
     }
 
@@ -58,12 +73,13 @@ public class GameController : MonoBehaviour
             if (pursuitLevel + adjustment <= 100)
             {
                 pursuitLevel += adjustment;
-            } 
-            else 
+            }
+            else
             {
                 pursuitLevel = 100f;
             }
         }
+
         Debug.Log(pursuitLevel);
     }
 }
