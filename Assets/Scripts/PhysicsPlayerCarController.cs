@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class PhysicsPlayerCarController : MonoBehaviour
 {
     [Header("Car Settings")]
     public float driftFactor = 0.4f;
-    public float accelerationFactor = 30.0f;
+    public float accelerationFactor = 30f;
     public float turnFactor = 3.5f;
-    public float maxSpeed = 20;
+    public float baseMaxSpeed = 20f;
 
     [Header("Health")]
     public int maxHealth = 100;
@@ -18,8 +16,11 @@ public class PhysicsPlayerCarController : MonoBehaviour
     public Slider healthBarSlider;
 
     [Header("Boost")]
-    public float boostStrength = 2.0f;
-    private bool isBoosting = false;
+    public float boostMultiplier = 1.5f;
+    public float boostDrainRate = 25f;
+    public float maxBoost = 100f;
+    private float currentBoost;
+    public Slider boostBarSlider;
 
     [Header("Drift Smoke Spawn Point")]
     public Transform driftSmokeSpawnPoint;
@@ -27,11 +28,9 @@ public class PhysicsPlayerCarController : MonoBehaviour
     private bool isDrifting = false;
     private bool isDestroyed = false;
 
-    // Drift smoke timing
     private float driftSmokeTimer = 0f;
-    public float driftSmokeInterval = 0.05f; // How often to spawn smoke
+    public float driftSmokeInterval = 0.05f;
 
-    // Movement
     float accelerationInput = 0;
     float steeringInput = 0;
     float rotationAngle = 0;
@@ -49,20 +48,20 @@ public class PhysicsPlayerCarController : MonoBehaviour
     void Start()
     {
         currentHealth = maxHealth;
+        currentBoost = maxBoost;
 
         if (healthBarSlider != null)
             healthBarSlider.maxValue = maxHealth;
 
+        if (boostBarSlider != null)
+            boostBarSlider.maxValue = maxBoost;
+
         UpdateHealthUI();
+        UpdateBoostUI();
 
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
-    }
-
-    void Update()
-    {
-        // Nothing here for now
     }
 
     void FixedUpdate()
@@ -70,81 +69,80 @@ public class PhysicsPlayerCarController : MonoBehaviour
         if (isDestroyed) return;
 
         isDrifting = Input.GetKey(KeyCode.Space);
-        isBoosting = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
-        ApplyEngineForce();
+        float boostActive = 1f;
+        bool boostKeyHeld = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+
+        if (boostKeyHeld && currentBoost > 0f)
+        {
+            boostActive = boostMultiplier;
+            currentBoost -= boostDrainRate * Time.fixedDeltaTime;
+            currentBoost = Mathf.Clamp(currentBoost, 0, maxBoost);
+        }
+
+        UpdateBoostUI();
+
+        ApplyEngineForce(boostActive);
         ReduceCarDrift();
         ApplySteering();
 
-        float speedPercent = rb.velocity.magnitude / maxSpeed;
+        float speedPercent = rb.velocity.magnitude / (baseMaxSpeed * boostMultiplier);
         SoundManager.Instance.UpdateEngineSound(speedPercent);
 
-        // Drifting sound + effect logic
         if (isDrifting && rb.velocity.magnitude > 1f)
         {
             SoundManager.Instance.PlayDrift();
-
             driftSmokeTimer += Time.fixedDeltaTime;
             if (driftSmokeTimer >= driftSmokeInterval)
             {
                 driftSmokeTimer = 0f;
-
                 if (driftSmokeSpawnPoint != null)
-                {
                     VisualEffectsManager.Instance.StartDriftSmoke(driftSmokeSpawnPoint.position);
-                }
             }
         }
         else
         {
             SoundManager.Instance.StopDrift();
-            driftSmokeTimer = 0f; // Reset timer so it doesn't queue smokes
+            driftSmokeTimer = 0f;
         }
     }
 
-    void ApplyEngineForce()
+    void ApplyEngineForce(float boost)
     {
-        float boostFactor = isBoosting ? 1.5f : 1.0f;
-
+        float maxSpeed = baseMaxSpeed * boost;
         velocityVsUp = Vector2.Dot(transform.up, rb.velocity);
 
         if (accelerationInput == 0)
-            rb.drag = Mathf.Lerp(rb.drag, 3.0f, Time.fixedDeltaTime * 3);
+            rb.drag = Mathf.Lerp(rb.drag, 3f, Time.fixedDeltaTime * 3);
         else
             rb.drag = 0;
 
-        if (velocityVsUp > (maxSpeed * boostFactor) && accelerationInput > 0)
+        if (velocityVsUp > maxSpeed && accelerationInput > 0)
             return;
 
-        if (velocityVsUp < (-maxSpeed * boostFactor) * 0.5f && accelerationInput < 0)
+        if (velocityVsUp < (-maxSpeed * 0.5f) && accelerationInput < 0)
             return;
 
-        Vector2 engineForceVector = accelerationFactor * accelerationInput * transform.up * boostFactor;
-        rb.AddForce(engineForceVector, ForceMode2D.Force);
+        Vector2 engineForce = accelerationFactor * accelerationInput * transform.up * boost;
+        rb.AddForce(engineForce, ForceMode2D.Force);
     }
 
     void ApplySteering()
     {
         float minTurningSpeedFactor = Mathf.Clamp01(rb.velocity.magnitude / 8);
-
         float directionMultiplier = (velocityVsUp >= 0) ? 1f : -1f;
-
         rotationAngle -= steeringInput * turnFactor * minTurningSpeedFactor * directionMultiplier;
         rb.MoveRotation(rotationAngle);
     }
 
     void ReduceCarDrift()
     {
-        //Controlling variables for gradual transition in and out of drifting
         float targetDriftFactor = isDrifting ? 0.95f : 0.4f;
         float transitionSpeed = 5f;
-
-        //driftFactor = isDrifting ? 0.95f : 0.4f;
         driftFactor = Mathf.Lerp(driftFactor, targetDriftFactor, Time.fixedDeltaTime * transitionSpeed);
 
         Vector2 forwardVelocity = transform.up * Vector2.Dot(rb.velocity, transform.up);
         Vector2 rightVelocity = transform.right * Vector2.Dot(rb.velocity, transform.right);
-
         rb.velocity = forwardVelocity + rightVelocity * driftFactor;
     }
 
@@ -160,20 +158,14 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
         currentHealth -= collisionDamage;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-
         UpdateHealthUI();
-        Debug.Log($"Car hit! Current health: {currentHealth}");
 
         if (currentHealth <= 0)
         {
             isDestroyed = true;
-
-            Debug.Log("Car destroyed!");
-
             SoundManager.Instance.StopDrift();
             SoundManager.Instance.StopEngine();
             SoundManager.Instance.PlayExplosion();
-
             VisualEffectsManager.Instance.PlayExplosion(transform.position);
             gameObject.SetActive(false);
         }
@@ -182,8 +174,29 @@ public class PhysicsPlayerCarController : MonoBehaviour
     void UpdateHealthUI()
     {
         if (healthBarSlider != null)
-        {
             healthBarSlider.value = currentHealth;
+    }
+
+    void UpdateBoostUI()
+    {
+        if (boostBarSlider != null)
+            boostBarSlider.value = currentBoost;
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("BoostItem"))
+        {
+            currentBoost = Mathf.Clamp(currentBoost + 30f, 0, maxBoost);
+            UpdateBoostUI();
+            Destroy(other.transform.root.gameObject); // Updated line
+        }
+
+        if (other.CompareTag("HealthItem"))
+        {
+            currentHealth = Mathf.Clamp(currentHealth + 25, 0, maxHealth);
+            UpdateHealthUI();
+            Destroy(other.transform.root.gameObject); // Updated line
         }
     }
 
@@ -192,11 +205,10 @@ public class PhysicsPlayerCarController : MonoBehaviour
         if (collision.gameObject.TryGetComponent(out PedestrianWalker pedestrian))
         {
             bool pedestrianKilled = pedestrian.Kill();
-
             if (pedestrianKilled)
             {
                 gameController.IncreasePursuit(15f);
-                SoundManager.Instance.PlayPedestrianHitSound(); // Play pedestrian hit sound
+                SoundManager.Instance.PlayPedestrianHitSound();
             }
         }
 

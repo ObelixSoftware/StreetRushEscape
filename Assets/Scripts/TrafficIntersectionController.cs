@@ -50,7 +50,7 @@ public class TrafficIntersectionController : MonoBehaviour
 
     void SetPhase(Phase phase)
     {
-        Debug.Log($"SetPhase called. North: {northLight}, South: {southLight}, East: {eastLight}, West: {westLight}");
+        //Debug.Log($"SetPhase called. North: {northLight}, South: {southLight}, East: {eastLight}, West: {westLight}");
 
         timer = 0f;
         currentPhase = phase;

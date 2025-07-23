@@ -11,6 +11,8 @@ TagManager:
   - PedestrianZone
   - Car
   - CopManager
+  - BoostItem
+  - HealthItem
   layers:
   - Default
   - TransparentFX

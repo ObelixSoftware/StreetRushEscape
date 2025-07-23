@@ -48,7 +48,7 @@ public class CopManager : MonoBehaviour
     public int GetActiveCops()
     {
         int activeCops = 0;
-        Debug.Log(CopDriveHandler.Cops.Count);
+        //Debug.Log(CopDriveHandler.Cops.Count);
         foreach (var cop in CopDriveHandler.Cops.ToArray())
         {
             if (cop.isActive) activeCops++;
