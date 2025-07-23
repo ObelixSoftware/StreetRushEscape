@@ -8,16 +8,18 @@ public class SoundManager : MonoBehaviour
     public AudioClip engineSound;
     public AudioClip driftSound;
     public AudioClip explosionSound;
-    public AudioClip backgroundMusic;  // General background music
-    public AudioClip chaseMusic;       // Police chase music
+    public AudioClip backgroundMusic;         // General background music
+    public AudioClip chaseMusic;              // Police chase music
+    public AudioClip pedestrianHitSound;      // Pedestrian hit sound
 
     [Header("Audio Sources")]
     public AudioSource engineAudioSource;
     public AudioSource driftAudioSource;
     public AudioSource explosionAudioSource;
+    public AudioSource backgroundMusicSource;
+    public AudioSource chaseMusicSource;
 
-    public AudioSource backgroundMusicSource;  // General background music
-    public AudioSource chaseMusicSource;       // Police chase music
+    private AudioSource pedestrianHitSource; // For hit sound
 
     private bool isChaseMusicPlaying = false;
 
@@ -34,31 +36,8 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
-        // Setup music audio sources
         SetupMusicAudioSources();
-    }
-
-    void SetupMusicAudioSources()
-    {
-        // Setup background music source
-        if (backgroundMusicSource == null)
-        {
-            backgroundMusicSource = gameObject.AddComponent<AudioSource>();
-            backgroundMusicSource.loop = true;
-            backgroundMusicSource.playOnAwake = false;
-            backgroundMusicSource.volume = 0.5f;
-            backgroundMusicSource.clip = backgroundMusic;
-        }
-
-        // Setup chase music source
-        if (chaseMusicSource == null)
-        {
-            chaseMusicSource = gameObject.AddComponent<AudioSource>();
-            chaseMusicSource.loop = true;
-            chaseMusicSource.playOnAwake = false;
-            chaseMusicSource.volume = 0.5f;
-            chaseMusicSource.clip = chaseMusic;
-        }
+        SetupPedestrianHitAudio();
     }
 
     void Start()
@@ -69,7 +48,6 @@ public class SoundManager : MonoBehaviour
 
         PlayBackgroundMusic();  // Start with general music
 
-        // Apply saved music volume
         float savedVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
         SetMusicVolume(savedVolume);
     }
@@ -110,13 +88,45 @@ public class SoundManager : MonoBehaviour
         }
     }
 
+    void SetupMusicAudioSources()
+    {
+        if (backgroundMusicSource == null)
+        {
+            backgroundMusicSource = gameObject.AddComponent<AudioSource>();
+            backgroundMusicSource.loop = true;
+            backgroundMusicSource.playOnAwake = false;
+            backgroundMusicSource.volume = 0.5f;
+            backgroundMusicSource.clip = backgroundMusic;
+        }
+
+        if (chaseMusicSource == null)
+        {
+            chaseMusicSource = gameObject.AddComponent<AudioSource>();
+            chaseMusicSource.loop = true;
+            chaseMusicSource.playOnAwake = false;
+            chaseMusicSource.volume = 0.5f;
+            chaseMusicSource.clip = chaseMusic;
+        }
+    }
+
+    void SetupPedestrianHitAudio()
+    {
+        if (pedestrianHitSource == null)
+        {
+            pedestrianHitSource = gameObject.AddComponent<AudioSource>();
+            pedestrianHitSource.loop = false;
+            pedestrianHitSource.playOnAwake = false;
+            pedestrianHitSource.clip = pedestrianHitSound;
+        }
+    }
+
     public void PlayBackgroundMusic()
     {
         if (backgroundMusicSource != null && !backgroundMusicSource.isPlaying)
         {
             backgroundMusicSource.Play();
         }
-        // Stop chase music if playing
+
         if (chaseMusicSource != null && chaseMusicSource.isPlaying)
         {
             chaseMusicSource.Stop();
@@ -131,7 +141,7 @@ public class SoundManager : MonoBehaviour
             chaseMusicSource.Play();
             isChaseMusicPlaying = true;
         }
-        // Stop background music if playing
+
         if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
         {
             backgroundMusicSource.Stop();
@@ -184,7 +194,14 @@ public class SoundManager : MonoBehaviour
             explosionAudioSource.PlayOneShot(explosionSound);
     }
 
-    // 🔊 This method allows main menu slider to adjust volume for music only
+    public void PlayPedestrianHitSound()
+    {
+        if (pedestrianHitSource != null && pedestrianHitSound != null)
+        {
+            pedestrianHitSource.PlayOneShot(pedestrianHitSound);
+        }
+    }
+
     public void SetMusicVolume(float volume)
     {
         if (backgroundMusicSource != null)
