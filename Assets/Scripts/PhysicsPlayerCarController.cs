@@ -191,13 +191,14 @@ public class PhysicsPlayerCarController : MonoBehaviour
     {
         if (collision.gameObject.TryGetComponent(out PedestrianWalker pedestrian))
         {
-           bool pedestrianKilled = pedestrian.Kill();
+            bool pedestrianKilled = pedestrian.Kill();
 
             if (pedestrianKilled)
+            {
                 gameController.IncreasePursuit(15f);
+                SoundManager.Instance.PlayPedestrianHitSound(); // Play pedestrian hit sound
+            }
         }
-
-
 
         HandleDamage(collision.gameObject);
     }

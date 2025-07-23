@@ -5,10 +5,8 @@ public class PedestrianWalker : MonoBehaviour
     public enum MoveDirection { Horizontal, Vertical }
     public MoveDirection direction = MoveDirection.Horizontal;
 
-    public float moveDistance = 3f;   // How far to move from the starting point
-    public float moveSpeed = 1.5f;    // Movement speed
-
-    //public GameController controller;
+    public float moveDistance = 3f;
+    public float moveSpeed = 1.5f;
 
     public Sprite deadSprite;
     private Sprite originalSprite;
@@ -21,7 +19,7 @@ public class PedestrianWalker : MonoBehaviour
     private float respawnDelay = 5f;
 
     private SpriteRenderer spriteRenderer;
-    private Collider2D collider;
+    private Collider2D col;
 
     void Start()
     {
@@ -33,9 +31,20 @@ public class PedestrianWalker : MonoBehaviour
             targetPos = startPos + Vector3.up * moveDistance;
 
         spriteRenderer = GetComponent<SpriteRenderer>();
-        originalSprite = spriteRenderer.sprite;
+        if (spriteRenderer != null)
+        {
+            originalSprite = spriteRenderer.sprite;
+        }
+        else
+        {
+            Debug.LogWarning("PedestrianWalker: SpriteRenderer not found on " + gameObject.name);
+        }
 
-        collider = GetComponent<Collider2D>();
+        col = GetComponent<Collider2D>();
+        if (col == null)
+        {
+            Debug.LogWarning("PedestrianWalker: Collider2D not found on " + gameObject.name);
+        }
     }
 
     void Update()
@@ -53,10 +62,8 @@ public class PedestrianWalker : MonoBehaviour
         Vector3 moveDir = (targetPos - transform.position).normalized;
         transform.position += moveDir * moveSpeed * Time.deltaTime;
 
-        // Check if we've reached the target
         if (Vector3.Distance(transform.position, targetPos) < 0.05f)
         {
-            // Flip direction
             movingForward = !movingForward;
 
             if (direction == MoveDirection.Horizontal)
@@ -68,15 +75,30 @@ public class PedestrianWalker : MonoBehaviour
 
     public bool Kill()
     {
-        if (isDead) 
+        if (isDead)
             return false;
 
         isDead = true;
         moveSpeed = 0;
-        spriteRenderer.sprite = deadSprite;
         respawnTimer = 0f;
 
         gameObject.layer = LayerMask.NameToLayer("DeadPedestrian");
+
+        // Recheck spriteRenderer in case it wasn’t assigned
+        if (spriteRenderer == null)
+            spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (spriteRenderer != null && deadSprite != null)
+        {
+            spriteRenderer.sprite = deadSprite;
+        }
+        else
+        {
+            Debug.LogWarning("PedestrianWalker: Missing spriteRenderer or deadSprite on " + gameObject.name);
+        }
+
+        if (col != null)
+            col.enabled = false;
 
         return true;
     }
@@ -84,12 +106,15 @@ public class PedestrianWalker : MonoBehaviour
     private void Respawn()
     {
         isDead = false;
-        spriteRenderer.sprite = originalSprite;
         moveSpeed = 1.5f;
         respawnTimer = 0f;
 
         gameObject.layer = LayerMask.NameToLayer("Default");
 
-        collider.enabled = true;
+        if (spriteRenderer != null)
+            spriteRenderer.sprite = originalSprite;
+
+        if (col != null)
+            col.enabled = true;
     }
 }
