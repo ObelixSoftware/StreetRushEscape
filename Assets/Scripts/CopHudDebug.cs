@@ -29,7 +29,7 @@ public class CopHudDebug : MonoBehaviour
         int maxCops = copManager.GetMaxCopsAllowed();
         int copArrayCount = CopDriveHandler.Cops.Count;
 
-        Debug.Log($"HUD Update: {copCount}/{maxCops}");
+       // Debug.Log($"HUD Update: {copCount}/{maxCops}");
 
         copCountText.text = $"Cops: {copCount} / {maxCops} / {copArrayCount}";
     }
