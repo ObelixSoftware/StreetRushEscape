@@ -1129,11 +1129,14 @@ MonoBehaviour:
   driftFactor: 0.4
   accelerationFactor: 10
   turnFactor: 3.5
-  maxSpeed: 20
+  baseMaxSpeed: 20
   maxHealth: 100
   collisionDamage: 20
   healthBarSlider: {fileID: 26577356}
-  boostStrength: 2
+  boostMultiplier: 1.5
+  boostDrainRate: 25
+  maxBoost: 100
+  boostBarSlider: {fileID: 0}
   driftSmokeSpawnPoint: {fileID: 1522105931}
   driftSmokeInterval: 0.05
   gameController: {fileID: 0}
@@ -1292,9 +1295,14 @@ MonoBehaviour:
   engineSound: {fileID: 8300000, guid: 7faeecffff0c3154e806cfbb1aeecfef, type: 3}
   driftSound: {fileID: 8300000, guid: be64677f749ed2e45bb181ee22a275d7, type: 3}
   explosionSound: {fileID: 8300000, guid: 916dce62d6a112e4d9b1bde24103f2d5, type: 3}
+  backgroundMusic: {fileID: 0}
+  chaseMusic: {fileID: 0}
+  pedestrianHitSound: {fileID: 0}
   engineAudioSource: {fileID: 476675124}
   driftAudioSource: {fileID: 1654492973}
   explosionAudioSource: {fileID: 171691390}
+  backgroundMusicSource: {fileID: 0}
+  chaseMusicSource: {fileID: 0}
 --- !u!4 &1111203324
 Transform:
   m_ObjectHideFlags: 0
