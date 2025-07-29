@@ -24,6 +24,7 @@ TagManager:
   - 
   - DeadPedestrian
   - 
+  - PlayerModel
   - 
   - 
   - 
@@ -44,8 +45,7 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
+  - MiniMapIcon
   m_SortingLayers:
   - name: Default
     uniqueID: 0
