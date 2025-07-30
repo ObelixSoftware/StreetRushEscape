@@ -8,7 +8,12 @@ public class CopDriveHandler : MonoBehaviour
     public float driftFactor = 0.4f;
     public float accelerationFactor = 30.0f;
     public float turnFactor = 3.5f;
-    public float maxSpeed = 20;
+    public float maxSpeed = 10;
+
+    [Header("Reverse Settings")]
+    public float stationaryThreshold = 1f;
+    public float stationaryDuration = 1f;
+    public float reverseDuration = 1f;
 
     public Transform playerTransform;
 
@@ -26,6 +31,9 @@ public class CopDriveHandler : MonoBehaviour
 
     private bool leftSensorTriggered = false;
     private bool rightSensorTriggered = false;
+    private float stationaryTimer = 0f;
+    private bool isReversing = false;
+    private float reverseTimer = 0f;
 
     void OnEnable()
     {
@@ -75,22 +83,64 @@ public class CopDriveHandler : MonoBehaviour
     {
         if (playerTransform == null) return;
 
-        //Determine angle to player
-        Vector2 directionToPlayer = (playerTransform.position - transform.position).normalized;
-        float angleToPlayer = Vector2.SignedAngle(transform.up, directionToPlayer);
+        HandleStationaryTimer();
 
-        //Turn left or right based on angle to player
-        if (leftSensorTriggered)
+        if (!isReversing) 
         {
-            steeringInput = 1f;
-        }
-        else if (rightSensorTriggered)
-        {
-            steeringInput = -1f;
+            //Determine angle to player
+            Vector2 directionToPlayer = (playerTransform.position - transform.position).normalized;
+            float angleToPlayer = Vector2.SignedAngle(transform.up, directionToPlayer);
+
+            //Turn left or right based on angle to player
+            if (leftSensorTriggered)
+            {
+                steeringInput = 1f;
+            }
+            else if (rightSensorTriggered)
+            {
+                steeringInput = -1f;
+            }
+            else
+            {
+                steeringInput = Mathf.Clamp(angleToPlayer / 45f, -1f, 1f);
+            }
         }
         else
         {
-            steeringInput = Mathf.Clamp(angleToPlayer / 45f, -1f, 1f);
+            steeringInput = 0f;
+        }
+    }
+
+    void HandleStationaryTimer()
+    {
+        float currentSpeed = rb.velocity.magnitude;
+
+        if (isReversing) 
+        {
+            reverseTimer -= Time.deltaTime;
+            if (reverseTimer <= 0f)
+            {
+                isReversing = false;
+                stationaryTimer = 0f;
+            }
+        }
+        else
+        {
+            if (currentSpeed < stationaryThreshold)
+            {
+                stationaryTimer += Time.deltaTime;
+
+                if (stationaryTimer >= stationaryDuration)
+                {
+                    isReversing = true;
+                    reverseTimer = reverseDuration;
+                    stationaryTimer = 0f;
+                }
+            }
+            else
+            {
+                stationaryTimer = 0f;
+            }
         }
     }
 
@@ -104,11 +154,23 @@ public class CopDriveHandler : MonoBehaviour
     void ApplyEngineForce()
     {
         velocityVsUp = Vector2.Dot(transform.up, rb.velocity);
-        if (velocityVsUp > maxSpeed)
-            return;
 
-        Vector2 engineForceVector = accelerationFactor * transform.up;
+        Vector2 engineForceVector;
+
+        if (isReversing)
+        {
+            engineForceVector = -accelerationFactor * transform.up;
+        }
+        else
+        {
+            if (velocityVsUp > maxSpeed)
+                return;
+
+            engineForceVector = accelerationFactor * transform.up;
+        }
+        
         rb.AddForce(engineForceVector, ForceMode2D.Force);
+        
     }
 
     void ApplySteering()
