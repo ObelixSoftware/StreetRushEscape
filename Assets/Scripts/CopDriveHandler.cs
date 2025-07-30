@@ -24,6 +24,9 @@ public class CopDriveHandler : MonoBehaviour
     public static List<CopDriveHandler> Cops = new List<CopDriveHandler>();
     public bool isActive;
 
+    private bool leftSensorTriggered = false;
+    private bool rightSensorTriggered = false;
+
     void OnEnable()
     {
         if (!Cops.Contains(this))
@@ -77,7 +80,18 @@ public class CopDriveHandler : MonoBehaviour
         float angleToPlayer = Vector2.SignedAngle(transform.up, directionToPlayer);
 
         //Turn left or right based on angle to player
-        steeringInput = Mathf.Clamp(angleToPlayer / 45f, -1f, 1f);
+        if (leftSensorTriggered)
+        {
+            steeringInput = 1f;
+        }
+        else if (rightSensorTriggered)
+        {
+            steeringInput = -1f;
+        }
+        else
+        {
+            steeringInput = Mathf.Clamp(angleToPlayer / 45f, -1f, 1f);
+        }
     }
 
     private void FixedUpdate()
@@ -121,6 +135,18 @@ public class CopDriveHandler : MonoBehaviour
         if (collision.gameObject.TryGetComponent(out PedestrianWalker pedestrian))
         {
             pedestrian.Kill();
+        }
+    }
+
+    public void OnSensorTriggered(bool isLeftSensor, bool isColliding)
+    {
+        if (isLeftSensor)
+        {
+            leftSensorTriggered = isColliding;
+        }
+        else
+        {
+            rightSensorTriggered = isColliding;
         }
     }
 }
