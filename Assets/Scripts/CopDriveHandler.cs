@@ -29,8 +29,8 @@ public class CopDriveHandler : MonoBehaviour
     public static List<CopDriveHandler> Cops = new List<CopDriveHandler>();
     public bool isActive;
 
-    private bool leftSensorTriggered = false;
-    private bool rightSensorTriggered = false;
+    private int? leftSensorTriggeredAt = null;
+    private int? rightSensorTriggeredAt = null;
     private float stationaryTimer = 0f;
     private bool isReversing = false;
     private float reverseTimer = 0f;
@@ -92,21 +92,25 @@ public class CopDriveHandler : MonoBehaviour
             float angleToPlayer = Vector2.SignedAngle(transform.up, directionToPlayer);
 
             //Turn left or right based on angle to player
-            if (leftSensorTriggered)
+            if (leftSensorTriggeredAt != null && (rightSensorTriggeredAt == null || leftSensorTriggeredAt < rightSensorTriggeredAt))
             {
-                steeringInput = 1f;
-            }
-            else if (rightSensorTriggered)
-            {
+                Debug.Log("Left sensor triggered");
                 steeringInput = -1f;
+            }
+            else if (rightSensorTriggeredAt != null)
+            {
+                Debug.Log("Right sensor triggered");
+                steeringInput = 1f;
             }
             else
             {
+                Debug.Log("No sensor triggered");
                 steeringInput = Mathf.Clamp(angleToPlayer / 45f, -1f, 1f);
             }
         }
         else
         {
+            Debug.Log("Reversing therefore not steering");
             steeringInput = 0f;
         }
     }
@@ -204,11 +208,11 @@ public class CopDriveHandler : MonoBehaviour
     {
         if (isLeftSensor)
         {
-            leftSensorTriggered = isColliding;
+            leftSensorTriggeredAt = isColliding ? Time.frameCount : (int?)null;
         }
         else
         {
-            rightSensorTriggered = isColliding;
+            rightSensorTriggeredAt = isColliding ? Time.frameCount : (int?)null;
         }
     }
 }
