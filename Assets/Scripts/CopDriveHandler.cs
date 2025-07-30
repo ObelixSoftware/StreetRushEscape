@@ -94,23 +94,19 @@ public class CopDriveHandler : MonoBehaviour
             //Turn left or right based on angle to player
             if (leftSensorTriggeredAt != null && (rightSensorTriggeredAt == null || leftSensorTriggeredAt < rightSensorTriggeredAt))
             {
-                Debug.Log("Left sensor triggered");
                 steeringInput = -1f;
             }
             else if (rightSensorTriggeredAt != null)
             {
-                Debug.Log("Right sensor triggered");
                 steeringInput = 1f;
             }
             else
             {
-                Debug.Log("No sensor triggered");
                 steeringInput = Mathf.Clamp(angleToPlayer / 45f, -1f, 1f);
             }
         }
         else
         {
-            Debug.Log("Reversing therefore not steering");
             steeringInput = 0f;
         }
     }
