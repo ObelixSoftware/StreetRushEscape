@@ -6,7 +6,7 @@ public class PedestrianWalker : MonoBehaviour
     public MoveDirection direction = MoveDirection.Horizontal;
 
     public float moveDistance = 3f;
-    public float moveSpeed = 1.5f;
+    public float walkSpeed = 1.5f;
 
     public Sprite deadSprite;
     private Sprite originalSprite;
@@ -20,6 +20,12 @@ public class PedestrianWalker : MonoBehaviour
 
     private SpriteRenderer spriteRenderer;
     private Collider2D col;
+
+    [Header("Pedestrian Light Settings")]
+    public PedestrianLightController assignedLight; // Assign the pedestrian light controlling this walker
+    public float proximityThreshold = 5f;            // Distance to start obeying the pedestrian light
+
+    private bool isCrossing = false;
 
     void Start()
     {
@@ -53,23 +59,51 @@ public class PedestrianWalker : MonoBehaviour
         {
             respawnTimer += Time.deltaTime;
             if (respawnTimer >= respawnDelay)
-            {
                 Respawn();
-            }
             return;
         }
 
-        Vector3 moveDir = (targetPos - transform.position).normalized;
-        transform.position += moveDir * moveSpeed * Time.deltaTime;
+        bool nearLight = false;
+        bool lightIsGreen = true; // default true if no assigned light
 
-        if (Vector3.Distance(transform.position, targetPos) < 0.05f)
+        if (assignedLight != null)
         {
-            movingForward = !movingForward;
+            float distanceToLight = Vector3.Distance(transform.position, assignedLight.transform.position);
+            nearLight = distanceToLight <= proximityThreshold;
+            lightIsGreen = assignedLight.IsGreen();
+        }
 
-            if (direction == MoveDirection.Horizontal)
-                targetPos = startPos + (movingForward ? Vector3.right : Vector3.left) * moveDistance;
-            else
-                targetPos = startPos + (movingForward ? Vector3.up : Vector3.down) * moveDistance;
+        if (nearLight)
+        {
+            // Stop moving if pedestrian light is red and pedestrian is near
+            if (!lightIsGreen)
+            {
+                // Not crossing - waiting for green
+                return;
+            }
+        }
+
+        // If green or outside proximity, allow crossing
+        if (!isCrossing)
+        {
+            isCrossing = true;
+        }
+
+        if (isCrossing)
+        {
+            Vector3 moveDir = (targetPos - transform.position).normalized;
+            transform.position += moveDir * walkSpeed * Time.deltaTime;
+
+            if (Vector3.Distance(transform.position, targetPos) < 0.05f)
+            {
+                movingForward = !movingForward;
+                isCrossing = false;
+
+                if (direction == MoveDirection.Horizontal)
+                    targetPos = startPos + (movingForward ? Vector3.right : Vector3.left) * moveDistance;
+                else
+                    targetPos = startPos + (movingForward ? Vector3.up : Vector3.down) * moveDistance;
+            }
         }
     }
 
@@ -79,12 +113,11 @@ public class PedestrianWalker : MonoBehaviour
             return false;
 
         isDead = true;
-        moveSpeed = 0;
+        walkSpeed = 0;
         respawnTimer = 0f;
 
         gameObject.layer = LayerMask.NameToLayer("DeadPedestrian");
 
-        // Recheck spriteRenderer in case it wasn’t assigned
         if (spriteRenderer == null)
             spriteRenderer = GetComponent<SpriteRenderer>();
 
@@ -106,7 +139,7 @@ public class PedestrianWalker : MonoBehaviour
     private void Respawn()
     {
         isDead = false;
-        moveSpeed = 1.5f;
+        walkSpeed = 1.5f;
         respawnTimer = 0f;
 
         gameObject.layer = LayerMask.NameToLayer("Default");
