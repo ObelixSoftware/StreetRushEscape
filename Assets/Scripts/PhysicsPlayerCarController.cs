@@ -68,6 +68,15 @@ public class PhysicsPlayerCarController : MonoBehaviour
     {
         if (isDestroyed) return;
 
+        // Combined WASD and Arrow Keys input
+        float vertical = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow) ? 1 :
+                         Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) ? -1 : 0;
+
+        float horizontal = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow) ? -1 :
+                           Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow) ? 1 : 0;
+
+        SetInputVector(new Vector2(horizontal, vertical));
+
         isDrifting = Input.GetKey(KeyCode.Space);
 
         float boostActive = 1f;
