@@ -143,7 +143,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ce249e2f8d2dee418e55191c184418a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1.5
-  changeDirectionInterval: 1.5
-  wanderRadius: 4
+  walkMode: 2
+  moveDistance: 7
+  walkSpeed: 0.5
   deadSprite: {fileID: 21300000, guid: 04ded41ababa4384cb06b74a27332af5, type: 3}
+  assignedLight: {fileID: 0}
+  proximityThreshold: 5
