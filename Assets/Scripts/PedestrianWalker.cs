@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class PedestrianWalker : MonoBehaviour
 {
-    public enum MoveDirection { Horizontal, Vertical }
-    public MoveDirection direction = MoveDirection.Horizontal;
+    public enum WalkMode { Horizontal, Vertical, Random }
+    public WalkMode walkMode = WalkMode.Horizontal;
 
     public float moveDistance = 3f;
     public float walkSpeed = 1.5f;
@@ -22,19 +23,25 @@ public class PedestrianWalker : MonoBehaviour
     private Collider2D col;
 
     [Header("Pedestrian Light Settings")]
-    public PedestrianLightController assignedLight; // Assign the pedestrian light controlling this walker
-    public float proximityThreshold = 5f;            // Distance to start obeying the pedestrian light
+    public PedestrianLightController assignedLight;
+    public float proximityThreshold = 5f;
 
     private bool isCrossing = false;
+
+    private float minRespawnDelay = 3f;
+    private float maxRespawnDelay = 8f;
+    private float fadeInTime = 1f;
 
     void Start()
     {
         startPos = transform.position;
 
-        if (direction == MoveDirection.Horizontal)
+        if (walkMode == WalkMode.Horizontal)
             targetPos = startPos + Vector3.right * moveDistance;
-        else
+        else if (walkMode == WalkMode.Vertical)
             targetPos = startPos + Vector3.up * moveDistance;
+        else
+            PickNewRandomTarget();
 
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
@@ -64,7 +71,7 @@ public class PedestrianWalker : MonoBehaviour
         }
 
         bool nearLight = false;
-        bool lightIsGreen = true; // default true if no assigned light
+        bool lightIsGreen = true;
 
         if (assignedLight != null)
         {
@@ -73,17 +80,11 @@ public class PedestrianWalker : MonoBehaviour
             lightIsGreen = assignedLight.IsGreen();
         }
 
-        if (nearLight)
+        if (nearLight && !lightIsGreen)
         {
-            // Stop moving if pedestrian light is red and pedestrian is near
-            if (!lightIsGreen)
-            {
-                // Not crossing - waiting for green
-                return;
-            }
+            return;
         }
 
-        // If green or outside proximity, allow crossing
         if (!isCrossing)
         {
             isCrossing = true;
@@ -99,12 +100,21 @@ public class PedestrianWalker : MonoBehaviour
                 movingForward = !movingForward;
                 isCrossing = false;
 
-                if (direction == MoveDirection.Horizontal)
+                if (walkMode == WalkMode.Horizontal)
                     targetPos = startPos + (movingForward ? Vector3.right : Vector3.left) * moveDistance;
-                else
+                else if (walkMode == WalkMode.Vertical)
                     targetPos = startPos + (movingForward ? Vector3.up : Vector3.down) * moveDistance;
+                else
+                    PickNewRandomTarget();
             }
         }
+    }
+
+    void PickNewRandomTarget()
+    {
+        float range = moveDistance;
+        Vector2 randomOffset = Random.insideUnitCircle.normalized * range;
+        targetPos = new Vector3(startPos.x + randomOffset.x, startPos.y + randomOffset.y, startPos.z);
     }
 
     public bool Kill()
@@ -115,6 +125,7 @@ public class PedestrianWalker : MonoBehaviour
         isDead = true;
         walkSpeed = 0;
         respawnTimer = 0f;
+        respawnDelay = Random.Range(minRespawnDelay, maxRespawnDelay);
 
         gameObject.layer = LayerMask.NameToLayer("DeadPedestrian");
 
@@ -122,13 +133,7 @@ public class PedestrianWalker : MonoBehaviour
             spriteRenderer = GetComponent<SpriteRenderer>();
 
         if (spriteRenderer != null && deadSprite != null)
-        {
             spriteRenderer.sprite = deadSprite;
-        }
-        else
-        {
-            Debug.LogWarning("PedestrianWalker: Missing spriteRenderer or deadSprite on " + gameObject.name);
-        }
 
         if (col != null)
             col.enabled = false;
@@ -145,9 +150,40 @@ public class PedestrianWalker : MonoBehaviour
         gameObject.layer = LayerMask.NameToLayer("Default");
 
         if (spriteRenderer != null)
+        {
             spriteRenderer.sprite = originalSprite;
+            StartCoroutine(FadeIn());
+        }
 
         if (col != null)
             col.enabled = true;
+
+        startPos = transform.position;
+
+        if (walkMode == WalkMode.Horizontal)
+            targetPos = startPos + Vector3.right * moveDistance;
+        else if (walkMode == WalkMode.Vertical)
+            targetPos = startPos + Vector3.up * moveDistance;
+        else
+            PickNewRandomTarget();
+    }
+
+    IEnumerator FadeIn()
+    {
+        float timer = 0f;
+        Color c = spriteRenderer.color;
+        c.a = 0;
+        spriteRenderer.color = c;
+
+        while (timer < fadeInTime)
+        {
+            timer += Time.deltaTime;
+            c.a = Mathf.Lerp(0f, 1f, timer / fadeInTime);
+            spriteRenderer.color = c;
+            yield return null;
+        }
+
+        c.a = 1f;
+        spriteRenderer.color = c;
     }
 }
