@@ -8,7 +8,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Menu.unity
     guid: 5dba6e3bc73c8f44abed3dbab4cf2799
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/SampleScene.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/ModernCityMap.unity
+    guid: 31473c77bdd2c4f4e92df0762ad8c795
   m_configObjects: {}
