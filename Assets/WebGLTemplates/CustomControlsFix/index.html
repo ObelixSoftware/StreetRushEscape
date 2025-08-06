@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <title>%UNITY_WEB_NAME%</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #000000;
+      }
+      #unityContainer {
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="unityContainer"></div>
+
+    <script>
+      window.addEventListener("keydown", function(e) {
+        if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) {
+          e.preventDefault();
+        }
+      }, false);
+    </script>
+
+    <script src="%UNITY_WEBGL_LOADER_URL%"></script>
+    <script>
+      createUnityInstance(document.querySelector("#unityContainer"), {
+        dataUrl: "%UNITY_WEBGL_DATA_URL%",
+        frameworkUrl: "%UNITY_WEBGL_FRAMEWORK_URL%",
+        codeUrl: "%UNITY_WEBGL_CODE_URL%",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "%COMPANY_NAME%",
+        productName: "%PRODUCT_NAME%",
+        productVersion: "%PRODUCT_VERSION%"
+      });
+    </script>
+  </body>
+</html>
