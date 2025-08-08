@@ -10,10 +10,10 @@ public class PhysicsPlayerCarController : MonoBehaviour
     public float steeringSpeed = 200f;
 
     [Header("Drift Settings")]
-    public float driftFactor = 0.4f;
-    public float highDriftFactor = 0.95f;
-    public float lowDriftFactor = 0.4f;
-    public float driftTransitionSpeed = 5f;
+    public float driftDrag = 0.05f;
+    public float normalDrag = 1f;
+    public float driftSteeringMultiplier = 2.5f;
+    public float driftSpeedBoost = 3f;
 
     [Header("Boost Settings")]
     public float boostMultiplier = 1.5f;
@@ -44,16 +44,16 @@ public class PhysicsPlayerCarController : MonoBehaviour
     private AudioSource audioSource;
     public GameController gameController;
 
-    // Bounce control variables
     private bool isBouncing = false;
-    private float bounceDuration = 0.15f; // how long bounce velocity lasts
-    private float bounceTimer = 0f;
     private Vector2 bounceVelocity;
+    private float bounceTimer = 0f;
+    private float bounceDuration = 0.2f;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
+        rb.drag = normalDrag;
 
         currentHealth = maxHealth;
         currentBoost = maxBoost;
@@ -71,7 +71,7 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
     void Update()
     {
-        if (isDestroyed) return;
+        if (isDestroyed || isBouncing) return;
 
         isDrifting = Input.GetKey(KeyCode.Space);
     }
@@ -82,16 +82,19 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
         if (isBouncing)
         {
+            // Apply bounce velocity and countdown
+            rb.velocity = bounceVelocity;
             bounceTimer -= Time.fixedDeltaTime;
             if (bounceTimer <= 0f)
             {
                 isBouncing = false;
-                rb.velocity = Vector2.zero; // stop bounce velocity
-                currentSpeed = Mathf.Min(currentSpeed, 1f); // reset speed to slow start after bounce
+                rb.velocity = Vector2.zero;
+                currentSpeed = 0f; // Reset speed after bounce so acceleration starts fresh
             }
-            // Skip normal controls while bouncing to let bounce velocity act
-            return;
+            return; // Skip normal control while bouncing
         }
+
+        rb.drag = isDrifting ? driftDrag : normalDrag;
 
         float boostFactor = 1f;
         if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && currentBoost > 0f)
@@ -103,7 +106,6 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
         ApplyEngineForce(boostFactor);
         ApplySteering();
-        ApplyDrift();
         UpdateBoostUI();
 
         float speedPercent = rb.velocity.magnitude / (maxForwardSpeed * boostMultiplier);
@@ -129,56 +131,45 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
     void ApplyEngineForce(float boostFactor)
     {
-        float targetMaxSpeed = (accelInput > 0 ? maxForwardSpeed : maxReverseSpeed) * boostFactor;
+        float targetMaxSpeed = (accelInput > 0 ? maxForwardSpeed : maxReverseSpeed);
+        if (isDrifting) targetMaxSpeed += driftSpeedBoost;
+        targetMaxSpeed *= boostFactor;
+
         float accelerationRate = acceleration * Time.fixedDeltaTime;
 
         if (accelInput > 0)
         {
-            if (currentSpeed < targetMaxSpeed)
-                currentSpeed += accelerationRate * (1f - (currentSpeed / targetMaxSpeed));
-            else
-                currentSpeed = targetMaxSpeed;
+            currentSpeed += accelerationRate;
+            currentSpeed = Mathf.Clamp(currentSpeed, 0f, targetMaxSpeed);
         }
         else if (accelInput < 0)
         {
-            if (currentSpeed > -targetMaxSpeed)
-                currentSpeed -= accelerationRate * (1f - (-currentSpeed / targetMaxSpeed));
-            else
-                currentSpeed = -targetMaxSpeed;
+            currentSpeed -= accelerationRate;
+            currentSpeed = Mathf.Clamp(currentSpeed, -targetMaxSpeed, 0f);
         }
         else
         {
             currentSpeed = Mathf.Lerp(currentSpeed, 0f, Time.fixedDeltaTime * 2f);
         }
 
-        Vector2 forwardVelocity = transform.up * currentSpeed;
-        Vector2 sidewaysVelocity = Vector2.Dot(rb.velocity, transform.right) * transform.right;
-
-        rb.velocity = forwardVelocity + sidewaysVelocity;
+        rb.velocity = transform.up * currentSpeed;
     }
 
     void ApplySteering()
     {
-        if (Mathf.Abs(currentSpeed) > 0.1f && steerInput != 0f)
+        // Only rotate if moving forward (accelInput > 0)
+        if (Mathf.Abs(currentSpeed) > 0.1f && steerInput != 0f && accelInput > 0f)
         {
             float direction = currentSpeed >= 0 ? 1f : -1f;
-            rb.MoveRotation(rb.rotation + steerInput * steeringSpeed * Time.fixedDeltaTime * direction);
+            float steerMultiplier = isDrifting ? driftSteeringMultiplier : 1f;
+            float rotationAmount = steerInput * steeringSpeed * Time.fixedDeltaTime * direction * steerMultiplier;
+            rb.MoveRotation(rb.rotation + rotationAmount);
         }
         else
         {
-            float snapped = Mathf.Round(rb.rotation / 90f) * 90f;
-            rb.MoveRotation(Mathf.LerpAngle(rb.rotation, snapped, Time.fixedDeltaTime * 5f));
+            float snappedRotation = Mathf.Round(rb.rotation / 90f) * 90f;
+            rb.MoveRotation(Mathf.LerpAngle(rb.rotation, snappedRotation, Time.fixedDeltaTime * 5f));
         }
-    }
-
-    void ApplyDrift()
-    {
-        float targetFactor = isDrifting ? highDriftFactor : lowDriftFactor;
-        driftFactor = Mathf.Lerp(driftFactor, targetFactor, Time.fixedDeltaTime * driftTransitionSpeed);
-
-        Vector2 forwardVelocity = transform.up * Vector2.Dot(rb.velocity, transform.up);
-        Vector2 rightVelocity = transform.right * Vector2.Dot(rb.velocity, transform.right);
-        rb.velocity = forwardVelocity + rightVelocity * driftFactor;
     }
 
     public void SetInputVector(Vector2 inputVector)
@@ -208,6 +199,8 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        if (isBouncing) return;
+
         if (collision.gameObject.TryGetComponent(out PedestrianWalker pedestrian))
         {
             if (pedestrian.Kill())
@@ -219,11 +212,11 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
         HandleDamage(collision.gameObject);
 
-        if (!isBouncing && collision.contacts.Length > 0)
+        if (collision.contacts.Length > 0)
         {
-            // Apply a short bounce-back velocity opposite to collision normal with reduced speed
-            bounceVelocity = collision.contacts[0].normal * 2f; // slower bounce back
-            rb.velocity = bounceVelocity;
+            Vector2 collisionNormal = collision.contacts[0].normal;
+            bounceVelocity = collisionNormal * 2f; // small bounce-back velocity
+            currentSpeed = 0f;
             isBouncing = true;
             bounceTimer = bounceDuration;
         }
