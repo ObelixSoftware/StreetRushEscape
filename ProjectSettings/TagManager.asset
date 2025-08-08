@@ -13,6 +13,8 @@ TagManager:
   - CopManager
   - BoostItem
   - HealthItem
+  - Police
+  - Pavement
   layers:
   - Default
   - TransparentFX
