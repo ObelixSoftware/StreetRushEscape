@@ -324,7 +324,7 @@ TextureImporter:
       213: 2134584563556110807
     second: free_106
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 13
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -341,9 +341,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -375,10 +378,15 @@ TextureImporter:
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
+  ignorePngGamma: 0
   applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -390,6 +398,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -402,6 +411,20 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
@@ -2664,9 +2687,116 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+    nameFileIdTable:
+      free_0: -337351728639113470
+      free_1: -4965553739594148211
+      free_10: 6896417841489334675
+      free_100: 5676557975786801406
+      free_101: 5837099966769130633
+      free_102: -1154585496681916454
+      free_103: 7615517831003101548
+      free_104: -6298926748983034480
+      free_105: 6541508295191479496
+      free_106: 2134584563556110807
+      free_11: 5575871735612188355
+      free_12: 4308412447922339816
+      free_13: -246151368097011941
+      free_14: -7617837323195907084
+      free_15: 3467876396792827902
+      free_16: 1608922730611987966
+      free_17: -5033581564710112172
+      free_18: -4130016818951302995
+      free_19: 7203673515896535473
+      free_2: -2491624659041743377
+      free_20: 6162077025218292029
+      free_21: 7763109817476047783
+      free_22: -4206953085034969394
+      free_23: 8667212218563747637
+      free_24: 2691798299735221653
+      free_25: 1638884094671746711
+      free_26: 3588723006960434170
+      free_27: 7187214194547050748
+      free_28: -3773892291479192456
+      free_29: 1821353447996864191
+      free_3: -6030434150411226544
+      free_30: -5967272915112141528
+      free_31: 1141529182710942894
+      free_32: -5783965794284557305
+      free_33: -312486692370520845
+      free_34: 4664226415276988432
+      free_35: 5541600983138687670
+      free_36: -4375937314128963928
+      free_37: -6318963139397398117
+      free_38: 4282876964277029134
+      free_39: 3208573360699494988
+      free_4: -3755228748222821808
+      free_40: -6549582046210087261
+      free_41: -2866576719205926970
+      free_42: 5109124947940211034
+      free_43: -8616856731044452517
+      free_44: -5744526273463911111
+      free_45: -7046142337283733753
+      free_46: -3787475026509731136
+      free_47: -1345972550003294147
+      free_48: -8385852559747943580
+      free_49: -2951383726279532441
+      free_5: -5501630112818903837
+      free_50: -7097367445848669656
+      free_51: -3865596276867466747
+      free_52: -4443537899394294306
+      free_53: 6684886053191579803
+      free_54: -3663200747216098633
+      free_55: -690379577438768297
+      free_56: 7285340200487289709
+      free_57: 3778410190769709608
+      free_58: -504850759503899947
+      free_59: -1346600475643192115
+      free_6: 5306446809137559511
+      free_60: 373077381873399757
+      free_61: 6618412415069329350
+      free_62: 4984105581631522284
+      free_63: 2101896281720761029
+      free_64: -7113173013321974609
+      free_65: -5150586416786211144
+      free_66: -8830440132880341340
+      free_67: 2348618178549858148
+      free_68: -5753680477840275507
+      free_69: -5323320700115191511
+      free_7: -1007682015698450451
+      free_70: 7189752468338616038
+      free_71: -8382063980809035268
+      free_72: 6968280136818183448
+      free_73: 8446614466299363296
+      free_74: -3960776263902569336
+      free_75: 6313888863602206428
+      free_76: -9105224923001190992
+      free_77: -1485595143604054237
+      free_78: -3524431168592095316
+      free_79: 5386850445899151167
+      free_8: -6991641134031357242
+      free_80: -6908465195999285208
+      free_81: 2620332832581923149
+      free_82: 5539591187566187406
+      free_83: -6734269728347643464
+      free_84: -8790254365200727888
+      free_85: 4733228624669890262
+      free_86: -8506638088690861484
+      free_87: 540632357552999301
+      free_88: -2685372063842001557
+      free_89: -4040449000033433201
+      free_9: -6160415447981303602
+      free_90: -8318362866922064807
+      free_91: -7459952145008203106
+      free_92: -5297165369167654283
+      free_93: 3357901961018986586
+      free_94: -6137242429100743368
+      free_95: -6562312805066302281
+      free_96: -6360670685550321848
+      free_97: -3018625875504664377
+      free_98: -406429223179707417
+      free_99: 6790902163275402405
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 

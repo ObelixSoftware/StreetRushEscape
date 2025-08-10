@@ -492,7 +492,7 @@ TextureImporter:
       213: -4520126965016470911
     second: farmingTilesheetComplete_162
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 13
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -509,9 +509,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -543,10 +546,15 @@ TextureImporter:
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
+  ignorePngGamma: 0
   applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -558,6 +566,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -570,6 +579,20 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
@@ -4008,9 +4031,172 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+    nameFileIdTable:
+      farmingTilesheetComplete_0: -3804508761067351096
+      farmingTilesheetComplete_1: 9039636714551694043
+      farmingTilesheetComplete_10: -8594528327521326848
+      farmingTilesheetComplete_100: -4767365504189926035
+      farmingTilesheetComplete_101: -2287018604316172352
+      farmingTilesheetComplete_102: -4512813760466996047
+      farmingTilesheetComplete_103: -4787557475376736130
+      farmingTilesheetComplete_104: -6922010206444219608
+      farmingTilesheetComplete_105: -8407825828113272028
+      farmingTilesheetComplete_106: 8084123141180333078
+      farmingTilesheetComplete_107: -8144232874795706680
+      farmingTilesheetComplete_108: 6158769643538725623
+      farmingTilesheetComplete_109: 9173456359599217151
+      farmingTilesheetComplete_11: 6362136907125784221
+      farmingTilesheetComplete_110: 8463943453179303408
+      farmingTilesheetComplete_111: -5954169288640704311
+      farmingTilesheetComplete_112: 5435640960597048326
+      farmingTilesheetComplete_113: -8660746625831347465
+      farmingTilesheetComplete_114: 3484122683161034666
+      farmingTilesheetComplete_115: 6348775854790515859
+      farmingTilesheetComplete_116: 4261682983329686121
+      farmingTilesheetComplete_117: 4399683525025751508
+      farmingTilesheetComplete_118: -1810622034596804595
+      farmingTilesheetComplete_119: 8558402720054422861
+      farmingTilesheetComplete_12: -1928141861466318034
+      farmingTilesheetComplete_120: -5130883372578722765
+      farmingTilesheetComplete_121: 5441228077279701581
+      farmingTilesheetComplete_122: -6833495891411895222
+      farmingTilesheetComplete_123: -4197297381351305825
+      farmingTilesheetComplete_124: -8075075451132913304
+      farmingTilesheetComplete_125: 5509495980984040493
+      farmingTilesheetComplete_126: -7429896299512350605
+      farmingTilesheetComplete_127: -2219077197227555543
+      farmingTilesheetComplete_128: 4612124193346825159
+      farmingTilesheetComplete_129: 5461303501783362541
+      farmingTilesheetComplete_13: 5913524256654537874
+      farmingTilesheetComplete_130: 330705130640316281
+      farmingTilesheetComplete_131: 8014635735303285485
+      farmingTilesheetComplete_132: 5020615275042410336
+      farmingTilesheetComplete_133: 8866292430565112878
+      farmingTilesheetComplete_134: -7097392840420351763
+      farmingTilesheetComplete_135: -5595089988250667391
+      farmingTilesheetComplete_136: 8374992103090972416
+      farmingTilesheetComplete_137: -6634142853980013193
+      farmingTilesheetComplete_138: -4091316819019676044
+      farmingTilesheetComplete_139: 300501890362993517
+      farmingTilesheetComplete_14: -862501422117474394
+      farmingTilesheetComplete_140: -5130317023355411320
+      farmingTilesheetComplete_141: -8662941561141747559
+      farmingTilesheetComplete_142: -7357290062171824989
+      farmingTilesheetComplete_143: 1313460756146097360
+      farmingTilesheetComplete_144: -3401220965286212287
+      farmingTilesheetComplete_145: -3065198713219609010
+      farmingTilesheetComplete_146: 208132757551309133
+      farmingTilesheetComplete_147: -6669560876661948423
+      farmingTilesheetComplete_148: 409110527828349059
+      farmingTilesheetComplete_149: -5577029699016820757
+      farmingTilesheetComplete_15: 7884202439838864038
+      farmingTilesheetComplete_150: 6689255155560123585
+      farmingTilesheetComplete_151: 3978895120430971694
+      farmingTilesheetComplete_152: -9072193610720822824
+      farmingTilesheetComplete_153: 5931243735437797264
+      farmingTilesheetComplete_154: 1148911136633193944
+      farmingTilesheetComplete_155: -6361407543971089500
+      farmingTilesheetComplete_156: -4463805826906947070
+      farmingTilesheetComplete_157: 9126501794000508660
+      farmingTilesheetComplete_158: 2504056109234003283
+      farmingTilesheetComplete_159: 8997417342969506988
+      farmingTilesheetComplete_16: -2501555726554715330
+      farmingTilesheetComplete_160: -7402943896241192817
+      farmingTilesheetComplete_161: -4595750681089273097
+      farmingTilesheetComplete_162: -4520126965016470911
+      farmingTilesheetComplete_17: 8477158311521162110
+      farmingTilesheetComplete_18: 7411463986318561562
+      farmingTilesheetComplete_19: -8768709074703493048
+      farmingTilesheetComplete_2: 4961142239980476891
+      farmingTilesheetComplete_20: -3307078689298695651
+      farmingTilesheetComplete_21: -8606168824166026374
+      farmingTilesheetComplete_22: 6603667085349298341
+      farmingTilesheetComplete_23: -8094125451734441747
+      farmingTilesheetComplete_24: 4035675141817111783
+      farmingTilesheetComplete_25: -3410554193055421493
+      farmingTilesheetComplete_26: -1789496340277160269
+      farmingTilesheetComplete_27: -1935549650877647996
+      farmingTilesheetComplete_28: 7079288336768331583
+      farmingTilesheetComplete_29: -5992781168898258240
+      farmingTilesheetComplete_3: 757023948743843195
+      farmingTilesheetComplete_30: 6069224281198521817
+      farmingTilesheetComplete_31: -290655573773597210
+      farmingTilesheetComplete_32: 3876364038597822603
+      farmingTilesheetComplete_33: -8483063436907453315
+      farmingTilesheetComplete_34: 4811884562216574991
+      farmingTilesheetComplete_35: -2303028797961352989
+      farmingTilesheetComplete_36: 2966644591719424979
+      farmingTilesheetComplete_37: -133010364588314811
+      farmingTilesheetComplete_38: -4603558021023980915
+      farmingTilesheetComplete_39: 2781319530362966427
+      farmingTilesheetComplete_4: 3057456477734638690
+      farmingTilesheetComplete_40: 1377567059976549138
+      farmingTilesheetComplete_41: -1622565245253289263
+      farmingTilesheetComplete_42: -6025890728198928848
+      farmingTilesheetComplete_43: 1350063760348976224
+      farmingTilesheetComplete_44: 2361899551763762751
+      farmingTilesheetComplete_45: -497224257606231171
+      farmingTilesheetComplete_46: -8494784610424499355
+      farmingTilesheetComplete_47: 4247353600084842746
+      farmingTilesheetComplete_48: -5145289644099452607
+      farmingTilesheetComplete_49: -2183036842559451673
+      farmingTilesheetComplete_5: -6442240476454756521
+      farmingTilesheetComplete_50: 5260134858719797772
+      farmingTilesheetComplete_51: 4397614769419113222
+      farmingTilesheetComplete_52: 8776874529096987522
+      farmingTilesheetComplete_53: -9001086260154784985
+      farmingTilesheetComplete_54: 7996845039014623408
+      farmingTilesheetComplete_55: 5086178685206803088
+      farmingTilesheetComplete_56: -8260924870554347526
+      farmingTilesheetComplete_57: 5714895600225439051
+      farmingTilesheetComplete_58: -543168557429203021
+      farmingTilesheetComplete_59: 1274999965753446980
+      farmingTilesheetComplete_6: -4614321815190767240
+      farmingTilesheetComplete_60: 652987580453121159
+      farmingTilesheetComplete_61: 7676716531714954363
+      farmingTilesheetComplete_62: 7826410878664047736
+      farmingTilesheetComplete_63: 3871517743971955312
+      farmingTilesheetComplete_64: -4625938217130550089
+      farmingTilesheetComplete_65: 1403793673567998100
+      farmingTilesheetComplete_66: 2424567997814149488
+      farmingTilesheetComplete_67: -2310638566207708638
+      farmingTilesheetComplete_68: 5863735279327129180
+      farmingTilesheetComplete_69: -8313131514988895803
+      farmingTilesheetComplete_7: -2186803429168163717
+      farmingTilesheetComplete_70: 6837797380565995554
+      farmingTilesheetComplete_71: 3882757470895938325
+      farmingTilesheetComplete_72: 6631611026356362419
+      farmingTilesheetComplete_73: 4542723533155901027
+      farmingTilesheetComplete_74: 2627845952781214953
+      farmingTilesheetComplete_75: -5081814509198662400
+      farmingTilesheetComplete_76: 7688840688103592372
+      farmingTilesheetComplete_77: -2283052586193448194
+      farmingTilesheetComplete_78: 6280338427971999693
+      farmingTilesheetComplete_79: 1200374505527675911
+      farmingTilesheetComplete_8: 3125511368389404920
+      farmingTilesheetComplete_80: 8315901428889589683
+      farmingTilesheetComplete_81: -7494106648621461862
+      farmingTilesheetComplete_82: -1166844522321172827
+      farmingTilesheetComplete_83: -2337796041394638852
+      farmingTilesheetComplete_84: -2194238617236972529
+      farmingTilesheetComplete_85: -860324858844477922
+      farmingTilesheetComplete_86: -5270676608762058033
+      farmingTilesheetComplete_87: 1141981346991693218
+      farmingTilesheetComplete_88: 4204536313378385754
+      farmingTilesheetComplete_89: 7919060643604297541
+      farmingTilesheetComplete_9: 6898981415228196279
+      farmingTilesheetComplete_90: -5301111988632358046
+      farmingTilesheetComplete_91: -3370972733334551957
+      farmingTilesheetComplete_92: 8511941498467895906
+      farmingTilesheetComplete_93: 6402092735575239365
+      farmingTilesheetComplete_94: 4596826443012605067
+      farmingTilesheetComplete_95: 4075576004778400724
+      farmingTilesheetComplete_96: 2411795176034838000
+      farmingTilesheetComplete_97: -86792208848789382
+      farmingTilesheetComplete_98: 7742142104684057720
+      farmingTilesheetComplete_99: -3164114747371572134
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
