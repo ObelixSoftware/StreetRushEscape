@@ -40,6 +40,9 @@ public class PhysicsPlayerCarController : MonoBehaviour
     AudioSource audioSource;
     public GameController gameController;
 
+    private bool straightenMode = false; // CTRL straighten toggle
+    public float straightenSpeed = 5f;   // How fast to straighten
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -79,6 +82,9 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
         isDrifting = Input.GetKey(KeyCode.Space);
 
+        // Activate straighten mode when CTRL is pressed
+        straightenMode = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+
         float boostActive = 1f;
         bool boostKeyHeld = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
@@ -93,7 +99,11 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
         ApplyEngineForce(boostActive);
         ReduceCarDrift();
-        ApplySteering();
+
+        if (straightenMode)
+            ApplyStraightenSteering(); // Smoothly straighten
+        else
+            ApplySteering(); // Normal steering
 
         float speedPercent = rb.velocity.magnitude / (baseMaxSpeed * boostMultiplier);
         SoundManager.Instance.UpdateEngineSound(speedPercent);
@@ -142,6 +152,14 @@ public class PhysicsPlayerCarController : MonoBehaviour
         float directionMultiplier = (velocityVsUp >= 0) ? 1f : -1f;
         rotationAngle -= steeringInput * turnFactor * minTurningSpeedFactor * directionMultiplier;
         rb.MoveRotation(rotationAngle);
+    }
+
+    void ApplyStraightenSteering()
+    {
+        // Snap toward nearest multiple of 90° but smoothly
+        float targetAngle = Mathf.Round(rb.rotation / 90f) * 90f;
+        float smoothedAngle = Mathf.LerpAngle(rb.rotation, targetAngle, Time.fixedDeltaTime * straightenSpeed);
+        rb.MoveRotation(smoothedAngle);
     }
 
     void ReduceCarDrift()
