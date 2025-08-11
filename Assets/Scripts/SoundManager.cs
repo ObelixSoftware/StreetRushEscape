@@ -18,10 +18,10 @@ public class SoundManager : MonoBehaviour
     public AudioSource explosionAudioSource;
     public AudioSource backgroundMusicSource;
     public AudioSource chaseMusicSource;
-
-    private AudioSource pedestrianHitSource; // For hit sound
+    public AudioSource pedestrianHitSource;  // Changed from private to public
 
     private bool isChaseMusicPlaying = false;
+    private bool musicStarted = false;
 
     void Awake()
     {
@@ -46,7 +46,8 @@ public class SoundManager : MonoBehaviour
         SetupDriftAudio();
         SetupExplosionAudio();
 
-        PlayBackgroundMusic();  // Start with general music
+        // Do NOT auto play music here anymore - start after user interaction (Play button)
+        // PlayBackgroundMusic();
 
         float savedVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
         SetMusicVolume(savedVolume);
@@ -209,5 +210,15 @@ public class SoundManager : MonoBehaviour
 
         if (chaseMusicSource != null)
             chaseMusicSource.volume = volume;
+    }
+
+    // New method to start music after user interaction (e.g. Play button pressed)
+    public void StartMusicAfterUnlock()
+    {
+        if (!musicStarted)
+        {
+            PlayBackgroundMusic();
+            musicStarted = true;
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections;
 
 public class MainMenu : MonoBehaviour
 {
@@ -22,6 +23,31 @@ public class MainMenu : MonoBehaviour
 
     public void PlayGame()
     {
+        StartCoroutine(UnlockAudioAndLoad());
+    }
+
+    private IEnumerator UnlockAudioAndLoad()
+    {
+        // Unlock audio for WebGL by playing silent clip once
+        if (SoundManager.Instance != null)
+        {
+            AudioSource audioSource = SoundManager.Instance.GetComponent<AudioSource>();
+            if (audioSource != null)
+            {
+                AudioClip silence = AudioClip.Create("silence", 1, 1, 44100, false);
+                audioSource.PlayOneShot(silence);
+            }
+        }
+
+        yield return null; // Wait a frame
+
+        // Tell SoundManager to start music after unlock
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.StartMusicAfterUnlock();
+        }
+
+        // Load next scene (game)
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
