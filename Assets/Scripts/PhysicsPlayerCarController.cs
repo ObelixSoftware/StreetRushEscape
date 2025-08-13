@@ -180,23 +180,31 @@ public class PhysicsPlayerCarController : MonoBehaviour
     }
 
     void HandleDamage(GameObject collidedObject)
+{
+    if (isDestroyed) return;
+
+    currentHealth -= collisionDamage;
+    currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+    UpdateHealthUI();
+
+    if (currentHealth <= 0)
     {
-        if (isDestroyed) return;
+        isDestroyed = true;
+        SoundManager.Instance.StopDrift();
+        SoundManager.Instance.StopEngine();
 
-        currentHealth -= collisionDamage;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        UpdateHealthUI();
+        // Play explosion
+        SoundManager.Instance.PlayExplosion();
+        VisualEffectsManager.Instance.PlayExplosion(transform.position);
 
-        if (currentHealth <= 0)
-        {
-            isDestroyed = true;
-            SoundManager.Instance.StopDrift();
-            SoundManager.Instance.StopEngine();
-            SoundManager.Instance.PlayExplosion();
-            VisualEffectsManager.Instance.PlayExplosion(transform.position);
-            gameObject.SetActive(false);
-        }
+        // Hide car 
+        gameObject.SetActive(false);
+
+        // Trigger Game Over UI with delay
+        if (GameOverManager.Instance != null)
+            GameOverManager.Instance.TriggerGameOver(transform.position);
     }
+}
 
     void UpdateHealthUI()
     {
