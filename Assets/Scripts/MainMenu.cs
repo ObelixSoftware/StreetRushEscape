@@ -9,8 +9,8 @@ public class MainMenu : MonoBehaviour
 
     void Start()
     {
-        // Volume Slider setup (only for music)
         float savedVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
+
         if (volumeSlider != null)
         {
             volumeSlider.value = savedVolume;
@@ -18,7 +18,13 @@ public class MainMenu : MonoBehaviour
                 OnMusicVolumeChanged(volumeSlider.value);
             });
         }
+
         ApplyMusicVolume(savedVolume);
+
+        if (SoundManager.Instance != null)
+        {
+            SoundManager.Instance.PlayMenuMusic();
+        }
     }
 
     public void PlayGame()
@@ -28,7 +34,6 @@ public class MainMenu : MonoBehaviour
 
     private IEnumerator UnlockAudioAndLoad()
     {
-        // Unlock audio for WebGL by playing silent clip once
         if (SoundManager.Instance != null)
         {
             AudioSource audioSource = SoundManager.Instance.GetComponent<AudioSource>();
@@ -39,21 +44,18 @@ public class MainMenu : MonoBehaviour
             }
         }
 
-        yield return null; // Wait a frame
+        yield return null;
 
-        // Tell SoundManager to start music after unlock
         if (SoundManager.Instance != null)
         {
-            SoundManager.Instance.StartMusicAfterUnlock();
+            yield return StartCoroutine(SoundManager.Instance.FadeMusicToGame(1.5f));
         }
 
-        // Load next scene (game)
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     public void QuitGame()
     {
-        Debug.Log("QUIT");
         Application.Quit();
     }
 
@@ -67,7 +69,6 @@ public class MainMenu : MonoBehaviour
     void ApplyMusicVolume(float volume)
     {
         if (SoundManager.Instance == null) return;
-
         SoundManager.Instance.SetMusicVolume(volume);
     }
 }
