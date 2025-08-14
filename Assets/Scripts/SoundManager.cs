@@ -1,24 +1,25 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class SoundManager : MonoBehaviour
 {
     public static SoundManager Instance;
 
-    [Header("Audio Clips")]
     public AudioClip engineSound;
     public AudioClip driftSound;
     public AudioClip explosionSound;
-    public AudioClip backgroundMusic;         // General background music
-    public AudioClip chaseMusic;              // Police chase music
-    public AudioClip pedestrianHitSound;      // Pedestrian hit sound
+    public AudioClip backgroundMusic;
+    public AudioClip chaseMusic;
+    public AudioClip pedestrianHitSound;
+    public AudioClip menuMusic;
 
-    [Header("Audio Sources")]
     public AudioSource engineAudioSource;
     public AudioSource driftAudioSource;
     public AudioSource explosionAudioSource;
     public AudioSource backgroundMusicSource;
     public AudioSource chaseMusicSource;
-    public AudioSource pedestrianHitSource;  // Changed from private to public
+    public AudioSource pedestrianHitSource;
+    public AudioSource menuMusicSource;
 
     private bool isChaseMusicPlaying = false;
     private bool musicStarted = false;
@@ -45,9 +46,6 @@ public class SoundManager : MonoBehaviour
         SetupEngineAudio();
         SetupDriftAudio();
         SetupExplosionAudio();
-
-        // Do NOT auto play music here anymore - start after user interaction (Play button)
-        // PlayBackgroundMusic();
 
         float savedVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
         SetMusicVolume(savedVolume);
@@ -108,6 +106,15 @@ public class SoundManager : MonoBehaviour
             chaseMusicSource.volume = 0.5f;
             chaseMusicSource.clip = chaseMusic;
         }
+
+        if (menuMusicSource == null)
+        {
+            menuMusicSource = gameObject.AddComponent<AudioSource>();
+            menuMusicSource.loop = true;
+            menuMusicSource.playOnAwake = false;
+            menuMusicSource.volume = 0.5f;
+            menuMusicSource.clip = menuMusic;
+        }
     }
 
     void SetupPedestrianHitAudio()
@@ -119,6 +126,42 @@ public class SoundManager : MonoBehaviour
             pedestrianHitSource.playOnAwake = false;
             pedestrianHitSource.clip = pedestrianHitSound;
         }
+    }
+
+    public void PlayMenuMusic()
+    {
+        StopMusic();
+        if (menuMusicSource != null && !menuMusicSource.isPlaying)
+        {
+            menuMusicSource.Play();
+        }
+    }
+
+    public IEnumerator FadeMusicToGame(float duration)
+    {
+        if (menuMusicSource == null || backgroundMusicSource == null) yield break;
+
+        float startMenuVol = menuMusicSource.volume;
+        float startGameVol = backgroundMusicSource.volume;
+        float time = 0f;
+
+        backgroundMusicSource.volume = 0f;
+        if (!backgroundMusicSource.isPlaying)
+            backgroundMusicSource.Play();
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+
+            menuMusicSource.volume = Mathf.Lerp(startMenuVol, 0f, t);
+            backgroundMusicSource.volume = Mathf.Lerp(0f, startGameVol, t);
+
+            yield return null;
+        }
+
+        menuMusicSource.Stop();
+        backgroundMusicSource.volume = startGameVol;
     }
 
     public void PlayBackgroundMusic()
@@ -152,13 +195,13 @@ public class SoundManager : MonoBehaviour
     public void StopMusic()
     {
         if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
-        {
             backgroundMusicSource.Stop();
-        }
+
         if (chaseMusicSource != null && chaseMusicSource.isPlaying)
-        {
             chaseMusicSource.Stop();
-        }
+
+        if (menuMusicSource != null && menuMusicSource.isPlaying)
+            menuMusicSource.Stop();
     }
 
     public void UpdateEngineSound(float speedPercent)
@@ -198,9 +241,7 @@ public class SoundManager : MonoBehaviour
     public void PlayPedestrianHitSound()
     {
         if (pedestrianHitSource != null && pedestrianHitSound != null)
-        {
             pedestrianHitSource.PlayOneShot(pedestrianHitSound);
-        }
     }
 
     public void SetMusicVolume(float volume)
@@ -210,9 +251,11 @@ public class SoundManager : MonoBehaviour
 
         if (chaseMusicSource != null)
             chaseMusicSource.volume = volume;
+
+        if (menuMusicSource != null)
+            menuMusicSource.volume = volume;
     }
 
-    // New method to start music after user interaction (e.g. Play button pressed)
     public void StartMusicAfterUnlock()
     {
         if (!musicStarted)

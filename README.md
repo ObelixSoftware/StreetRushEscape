@@ -11,3 +11,16 @@ Car physics
 ```
 git log  > CHANGELOG.md
 ```
+
+ASSETS: 
+Explotion - https://kenney.nl/assets/smoke-particles
+sound of explotion: https://freesound.org/people/alfrodou/sounds/323317/
+pedestrians: https://kenney.nl
+sound of dying: https://freesound.org
+Background and chase music: https://freesound.org
+health, boost, drift icons: https://kenney.nl
+ModernCity: [kenney](https://kenney.nl/assets)
+city pack: https://nyknck.itch.io/citypackpixelart
+farm stuff: itch.io 
+Game over sound: https://pixabay.com/sound-effects/search/game-over/
+MainMenu: https://pixabay.com/music/search/arcade/
