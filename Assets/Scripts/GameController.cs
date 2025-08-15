@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour
     public Slider timeSlider;
 
     public float pursuitLevel = 0f;
+    public float pursuitDecayMult = 1f;
     public int score = 0;
 
     //Time
@@ -37,7 +38,7 @@ public class GameController : MonoBehaviour
 
         if (pursuitLevel > 0)
         {
-            pursuitLevel -= Time.deltaTime;
+            pursuitLevel -= Time.deltaTime * pursuitDecayMult;
         }
 
         timeSlider.value = globalTime;
@@ -81,5 +82,10 @@ public class GameController : MonoBehaviour
         }
 
         Debug.Log(pursuitLevel);
+    }
+
+    internal void setPursuitDecay(float adjustment = 1f)
+    {
+        pursuitDecayMult = adjustment;
     }
 }
