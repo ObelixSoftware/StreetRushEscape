@@ -11,7 +11,7 @@ public class PhysicsPlayerCarController : MonoBehaviour
 
     [Header("Health")]
     public int maxHealth = 100;
-    public int collisionDamage = 20;
+    public int collisionDamage = 1;
     private int currentHealth;
     public Slider healthBarSlider;
 
@@ -183,8 +183,11 @@ public class PhysicsPlayerCarController : MonoBehaviour
 {
     if (isDestroyed) return;
 
-    currentHealth -= collisionDamage;
+    currentHealth -= collisionDamage * (int)Mathf.Abs(rb.velocity.magnitude);
     currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+
+    Debug.Log("Dealt the player " + (collisionDamage * (int)Mathf.Abs(rb.velocity.magnitude)) + " damage");
+
     UpdateHealthUI();
 
     if (currentHealth <= 0)
