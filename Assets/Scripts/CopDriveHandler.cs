@@ -198,6 +198,10 @@ public class CopDriveHandler : MonoBehaviour
         {
             pedestrian.Kill();
         }
+        else if (collision.gameObject.CompareTag("Car"))
+        {
+            rb.velocity *= 0.2f;
+        }
     }
 
     public void OnSensorTriggered(bool isLeftSensor, bool isColliding)
@@ -211,4 +215,6 @@ public class CopDriveHandler : MonoBehaviour
             rightSensorTriggeredAt = isColliding ? Time.frameCount : (int?)null;
         }
     }
+
+
 }
