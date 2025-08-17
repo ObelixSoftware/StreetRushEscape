@@ -76,7 +76,7 @@ public class PedestrianSpawner : MonoBehaviour
         if (walker != null)
             StartCoroutine(RemoveWhenDead(walker));
 
-        Debug.Log($"Spawned pedestrian: {pedestrian.name} at {spawnPos}");
+        //Debug.Log($"Spawned pedestrian: {pedestrian.name} at {spawnPos}");
     }
 
     System.Collections.IEnumerator RemoveWhenDead(PedestrianWalker walker)
