@@ -12,15 +12,33 @@ Car physics
 git log  > CHANGELOG.md
 ```
 
-ASSETS: 
-Explotion - https://kenney.nl/assets/smoke-particles
-sound of explotion: https://freesound.org/people/alfrodou/sounds/323317/
-pedestrians: https://kenney.nl
-sound of dying: https://freesound.org
-Background and chase music: https://freesound.org
-health, boost, drift icons: https://kenney.nl
-ModernCity: [kenney](https://kenney.nl/assets)
-city pack: https://nyknck.itch.io/citypackpixelart
-farm stuff: itch.io 
-Game over sound: https://pixabay.com/sound-effects/search/game-over/
-MainMenu: https://pixabay.com/music/search/arcade/
+# Game Assets Credits
+
+This project uses free assets from various creators. Huge thanks to them for providing these resources!
+
+---
+
+## Visual Assets
+- Explosion (Smoke Particles): [Kenney.nl](https://kenney.nl/assets/smoke-particles)  
+- Pedestrians: [Kenney.nl](https://kenney.nl)  
+- Health, Boost, Drift Icons: [Kenney.nl](https://kenney.nl)  
+- Modern City Pack: [Kenney.nl](https://kenney.nl/assets/modern-city)  
+- City Pack (Pixel Art): [Nyknck on Itch.io](https://nyknck.itch.io/citypackpixelart)  
+- Farm Assets: [Itch.io](https://itch.io/game-assets)  
+- Money Bag Icon: [FavPNG](https://favpng.com)
+
+---
+
+## Audio Assets
+- Explosion Sound: [Alfrodou on Freesound](https://freesound.org/people/alfrodou/sounds/323317/)  
+- Death Sound: [Freesound.org](https://freesound.org)  
+- Background & Chase Music: [Freesound.org](https://freesound.org)  
+- Game Over Sound: [Pixabay](https://pixabay.com/sound-effects/search/game-over/)  
+- Main Menu Music: [Pixabay](https://pixabay.com/music/search/arcade/)  
+
+---
+
+## Notes
+- Assets from **Kenney.nl** are public domain (CC0), no attribution required — but credit is appreciated.  
+- Assets from **Freesound.org** and **Pixabay** are licensed under their respective terms; please check each link for details.  
+- Assets from **Itch.io** and **FavPNG** may have specific usage restrictions — always verify before commercial release.  
