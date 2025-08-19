@@ -37,8 +37,3 @@ This project uses free assets from various creators. Huge thanks to them for pro
 - Main Menu Music: [Pixabay](https://pixabay.com/music/search/arcade/)  
 
 ---
-
-## Notes
-- Assets from **Kenney.nl** are public domain (CC0), no attribution required — but credit is appreciated.  
-- Assets from **Freesound.org** and **Pixabay** are licensed under their respective terms; please check each link for details.  
-- Assets from **Itch.io** and **FavPNG** may have specific usage restrictions — always verify before commercial release.  
