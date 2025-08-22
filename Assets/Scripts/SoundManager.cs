@@ -39,16 +39,9 @@ public class SoundManager : MonoBehaviour
 
         SetupMusicAudioSources();
         SetupPedestrianHitAudio();
-    }
-
-    void Start()
-    {
         SetupEngineAudio();
         SetupDriftAudio();
         SetupExplosionAudio();
-
-        float savedVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
-        SetMusicVolume(savedVolume);
     }
 
     void SetupEngineAudio()
@@ -128,82 +121,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void PlayMenuMusic()
-    {
-        StopMusic();
-        if (menuMusicSource != null && !menuMusicSource.isPlaying)
-        {
-            menuMusicSource.Play();
-        }
-    }
-
-    public IEnumerator FadeMusicToGame(float duration)
-    {
-        if (menuMusicSource == null || backgroundMusicSource == null) yield break;
-
-        float startMenuVol = menuMusicSource.volume;
-        float startGameVol = backgroundMusicSource.volume;
-        float time = 0f;
-
-        backgroundMusicSource.volume = 0f;
-        if (!backgroundMusicSource.isPlaying)
-            backgroundMusicSource.Play();
-
-        while (time < duration)
-        {
-            time += Time.deltaTime;
-            float t = time / duration;
-
-            menuMusicSource.volume = Mathf.Lerp(startMenuVol, 0f, t);
-            backgroundMusicSource.volume = Mathf.Lerp(0f, startGameVol, t);
-
-            yield return null;
-        }
-
-        menuMusicSource.Stop();
-        backgroundMusicSource.volume = startGameVol;
-    }
-
-    public void PlayBackgroundMusic()
-    {
-        if (backgroundMusicSource != null && !backgroundMusicSource.isPlaying)
-        {
-            backgroundMusicSource.Play();
-        }
-
-        if (chaseMusicSource != null && chaseMusicSource.isPlaying)
-        {
-            chaseMusicSource.Stop();
-            isChaseMusicPlaying = false;
-        }
-    }
-
-    public void PlayChaseMusic()
-    {
-        if (chaseMusicSource != null && !chaseMusicSource.isPlaying)
-        {
-            chaseMusicSource.Play();
-            isChaseMusicPlaying = true;
-        }
-
-        if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
-        {
-            backgroundMusicSource.Stop();
-        }
-    }
-
-    public void StopMusic()
-    {
-        if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
-            backgroundMusicSource.Stop();
-
-        if (chaseMusicSource != null && chaseMusicSource.isPlaying)
-            chaseMusicSource.Stop();
-
-        if (menuMusicSource != null && menuMusicSource.isPlaying)
-            menuMusicSource.Stop();
-    }
-
+    // --- Engine, Drift, Explosion ---
     public void UpdateEngineSound(float speedPercent)
     {
         if (engineAudioSource != null)
@@ -234,14 +152,79 @@ public class SoundManager : MonoBehaviour
 
     public void PlayExplosion()
     {
-        if (explosionAudioSource != null)
-            explosionAudioSource.PlayOneShot(explosionSound);
+        explosionAudioSource?.PlayOneShot(explosionSound);
     }
 
     public void PlayPedestrianHitSound()
     {
         if (pedestrianHitSource != null && pedestrianHitSound != null)
             pedestrianHitSource.PlayOneShot(pedestrianHitSound);
+    }
+
+    // --- Music Controls ---
+    public void PlayBackgroundMusic()
+    {
+        if (backgroundMusicSource != null && !backgroundMusicSource.isPlaying)
+            backgroundMusicSource.Play();
+
+        if (chaseMusicSource != null && chaseMusicSource.isPlaying)
+        {
+            chaseMusicSource.Stop();
+            isChaseMusicPlaying = false;
+        }
+    }
+
+    public void PlayChaseMusic()
+    {
+        if (chaseMusicSource != null && !chaseMusicSource.isPlaying)
+        {
+            chaseMusicSource.Play();
+            isChaseMusicPlaying = true;
+        }
+
+        if (backgroundMusicSource != null && backgroundMusicSource.isPlaying)
+            backgroundMusicSource.Stop();
+    }
+
+    public void PlayMenuMusic()
+    {
+        StopMusic();
+        if (menuMusicSource != null && !menuMusicSource.isPlaying)
+            menuMusicSource.Play();
+    }
+
+    public IEnumerator FadeMusicToGame(float duration)
+    {
+        if (menuMusicSource == null || backgroundMusicSource == null) yield break;
+
+        float startMenuVol = menuMusicSource.volume;
+        float startGameVol = backgroundMusicSource.volume;
+        float time = 0f;
+
+        backgroundMusicSource.volume = 0f;
+        if (!backgroundMusicSource.isPlaying)
+            backgroundMusicSource.Play();
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float t = time / duration;
+
+            menuMusicSource.volume = Mathf.Lerp(startMenuVol, 0f, t);
+            backgroundMusicSource.volume = Mathf.Lerp(0f, startGameVol, t);
+
+            yield return null;
+        }
+
+        menuMusicSource.Stop();
+        backgroundMusicSource.volume = startGameVol;
+    }
+
+    public void StopMusic()
+    {
+        backgroundMusicSource?.Stop();
+        chaseMusicSource?.Stop();
+        menuMusicSource?.Stop();
     }
 
     public void SetMusicVolume(float volume)
@@ -263,5 +246,34 @@ public class SoundManager : MonoBehaviour
             PlayBackgroundMusic();
             musicStarted = true;
         }
+    }
+
+    // --- Cutscene Helpers ---
+    public void MuteAllMusic()
+    {
+        if (backgroundMusicSource != null) backgroundMusicSource.Pause();
+        if (chaseMusicSource != null) chaseMusicSource.Pause();
+        if (menuMusicSource != null) menuMusicSource.Pause();
+        PauseEngineSound();
+        StopDrift();
+    }
+
+    public void ResumeAllMusic()
+    {
+        if (backgroundMusicSource != null) backgroundMusicSource.UnPause();
+        if (chaseMusicSource != null) chaseMusicSource.UnPause();
+        if (menuMusicSource != null) menuMusicSource.UnPause();
+    }
+
+    public void PauseEngineSound()
+    {
+        if (engineAudioSource != null && engineAudioSource.isPlaying)
+            engineAudioSource.Pause();
+    }
+
+    public void ResumeEngineSound()
+    {
+        if (engineAudioSource != null)
+            engineAudioSource.UnPause();
     }
 }

@@ -14,7 +14,9 @@ public class MissionCutsceneController : MonoBehaviour
     private void Start()
     {
         // Hide RawImage and mission objects at start
-        cutsceneDisplay.gameObject.SetActive(false);
+        if (cutsceneDisplay != null)
+            cutsceneDisplay.gameObject.SetActive(false);
+
         if (missionObjects != null)
             missionObjects.SetActive(false);
     }
@@ -22,6 +24,9 @@ public class MissionCutsceneController : MonoBehaviour
     public void StartCutscene()
     {
         if (videoPlayer == null || cutsceneDisplay == null) return;
+
+        // Mute all sounds including engine
+        SoundManager.Instance?.MuteAllMusic();
 
         cutsceneDisplay.gameObject.SetActive(true);
         videoPlayer.Play();
@@ -32,8 +37,13 @@ public class MissionCutsceneController : MonoBehaviour
     {
         cutsceneDisplay.gameObject.SetActive(false);
 
+        // Activate mission objects
         if (missionObjects != null)
-            missionObjects.SetActive(true); // activate mission
+            missionObjects.SetActive(true);
+
+        // Resume all sounds including engine
+        SoundManager.Instance?.ResumeAllMusic();
+        SoundManager.Instance?.ResumeEngineSound();
 
         videoPlayer.loopPointReached -= OnCutsceneEnd;
     }

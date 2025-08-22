@@ -8,6 +8,9 @@ public class Scoreboard : MonoBehaviour
     [Header("UI")]
     public Text collectedText; // e.g. "Collected: 0 / 5"
 
+    [Header("Win UI")]
+    public WinManager winManager; // Assign your WinManager here
+
     private int totalBags = 0;
     private int collectedBags = 0;
 
@@ -29,6 +32,12 @@ public class Scoreboard : MonoBehaviour
     {
         collectedBags++;
         UpdateUI();
+
+        // Check if all bags are collected
+        if (collectedBags >= totalBags)
+        {
+            winManager?.ShowWinScreen();
+        }
     }
 
     private void UpdateUI()
