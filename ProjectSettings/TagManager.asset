@@ -15,6 +15,7 @@ TagManager:
   - HealthItem
   - Police
   - Pavement
+  - MoneyBag
   layers:
   - Default
   - TransparentFX
