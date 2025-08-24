@@ -51,22 +51,24 @@ public class MissionHandler : MonoBehaviour
     //Changes the active waypoint and mission to next in the list and moves the collider.
     void activateMissionWaypoint(int missionID, int waypointID)
     {
-        activeMission = missionID;
-        activeWaypoint = waypointID;
-        missionObj = missionList.transform.GetChild(missionID).gameObject;
+        if (missionList != null && missionList.transform.childCount > 0) {
+            activeMission = missionID;
+            activeWaypoint = waypointID;
+            missionObj = missionList.transform.GetChild(missionID).gameObject;
 
-        Mission mission = missionObj.GetComponent<Mission>();
+            Mission mission = missionObj.GetComponent<Mission>();
 
-        waypointObj = missionObj.transform.GetChild(waypointID).gameObject;
-        Waypoint waypoint = waypointObj.GetComponent<Waypoint>();
+            waypointObj = missionObj.transform.GetChild(waypointID).gameObject;
+            Waypoint waypoint = waypointObj.GetComponent<Waypoint>();
 
-        //Fires the dialogue for the current waypoint
-        Debug.Log(waypoint.dialogue.name + waypoint.dialogue.sentences);
-        FindObjectOfType<DialogueManager>().StartDialogue(waypoint.dialogue);
+            //Fires the dialogue for the current waypoint
+            Debug.Log(waypoint.dialogue.name + waypoint.dialogue.sentences);
+            FindObjectOfType<DialogueManager>().StartDialogue(waypoint.dialogue);
 
-        _title.text = mission.missionName;
-        _waypointDescription.text = waypoint.waypointDescription;
+            _title.text = mission.missionName;
+            _waypointDescription.text = waypoint.waypointDescription;
 
-        waypointCollider.transform.position = waypointObj.transform.position;
+            waypointCollider.transform.position = waypointObj.transform.position;
+        }
     }
 }
