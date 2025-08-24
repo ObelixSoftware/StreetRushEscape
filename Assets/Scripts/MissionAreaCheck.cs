@@ -7,6 +7,7 @@ public class MissionAreaCheck : MonoBehaviour
     public bool missionStarted = false;
 
     public MissionCutsceneController cutsceneController; // assign in inspector
+    public ExitArrowController exitArrowController;      // assign in inspector
 
     void Update()
     {
@@ -18,7 +19,14 @@ public class MissionAreaCheck : MonoBehaviour
         {
             missionStarted = true;
             Debug.Log("Mission Started!");
+
             cutsceneController.StartCutscene();
+
+            // Trigger exit arrow logic
+            if (exitArrowController != null)
+            {
+                exitArrowController.StartMissionArrow();
+            }
         }
     }
 
