@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class Scoreboard : MonoBehaviour
@@ -11,10 +12,12 @@ public class Scoreboard : MonoBehaviour
     [Header("Win UI")]
     public WinManager winManager; // Assign your WinManager here
 
+    [Header("Score Data")]
+    public List<ScoreEntry> scores = new List<ScoreEntry>();
+
     private int totalBags = 0;
     private int collectedBags = 0;
-
-    private const int totalAmount = 4000000; // Total money available in the game
+    private const int totalAmount = 4000000; // Total money available
 
     private void Awake()
     {
@@ -22,20 +25,21 @@ public class Scoreboard : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    // Called by MoneyBagItem on Start
     public void RegisterBag()
     {
         totalBags++;
         UpdateUI();
     }
 
-    // Called by MoneyBagItem when collected
     public void CollectBag()
     {
         collectedBags++;
         UpdateUI();
 
-        // Check if all bags are collected
+        // Add dynamic score for this collection
+        scores.Add(new ScoreEntry("Player", collectedBags * (totalAmount / totalBags)));
+
+        // Check if all bags collected
         if (collectedBags >= totalBags && totalBags > 0)
         {
             winManager?.ShowWinScreen();
@@ -48,7 +52,6 @@ public class Scoreboard : MonoBehaviour
         {
             int moneyPerBag = totalAmount / totalBags;
             int moneyCollected = collectedBags * moneyPerBag;
-
             collectedText.text = $"Collected: ${moneyCollected:N0} / ${totalAmount:N0}";
         }
         else if (collectedText != null)
@@ -57,11 +60,11 @@ public class Scoreboard : MonoBehaviour
         }
     }
 
-    // Optional: reset for new game
     public void ResetScore()
     {
         totalBags = 0;
         collectedBags = 0;
+        scores.Clear();
         UpdateUI();
     }
 }
