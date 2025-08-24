@@ -6,13 +6,15 @@ public class Scoreboard : MonoBehaviour
     public static Scoreboard Instance;
 
     [Header("UI")]
-    public Text collectedText; // e.g. "Collected: 0 / 5"
+    public Text collectedText; // Example: "Collected: $1,000,000 / $4,000,000"
 
     [Header("Win UI")]
     public WinManager winManager; // Assign your WinManager here
 
     private int totalBags = 0;
     private int collectedBags = 0;
+
+    private const int totalAmount = 4000000; // Total money available in the game
 
     private void Awake()
     {
@@ -34,7 +36,7 @@ public class Scoreboard : MonoBehaviour
         UpdateUI();
 
         // Check if all bags are collected
-        if (collectedBags >= totalBags)
+        if (collectedBags >= totalBags && totalBags > 0)
         {
             winManager?.ShowWinScreen();
         }
@@ -42,8 +44,17 @@ public class Scoreboard : MonoBehaviour
 
     private void UpdateUI()
     {
-        if (collectedText != null)
-            collectedText.text = $"Collected: {collectedBags} / {totalBags}";
+        if (collectedText != null && totalBags > 0)
+        {
+            int moneyPerBag = totalAmount / totalBags;
+            int moneyCollected = collectedBags * moneyPerBag;
+
+            collectedText.text = $"Collected: ${moneyCollected:N0} / ${totalAmount:N0}";
+        }
+        else if (collectedText != null)
+        {
+            collectedText.text = $"Collected: $0 / ${totalAmount:N0}";
+        }
     }
 
     // Optional: reset for new game

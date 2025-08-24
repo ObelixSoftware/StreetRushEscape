@@ -2,17 +2,30 @@
 
 public class MoneyBagItem : MonoBehaviour
 {
+    [Header("Gameplay")]
+    public GameController gameController;   // Assign your GameController here
+    public float pursuitIncrease = 5f;      // How much pursuit increases per bag
+
     private void Start()
     {
-        Scoreboard.Instance?.RegisterBag(); // count total bags on map
+        Scoreboard.Instance?.RegisterBag(); // Count total bags on map
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Car")) // changed from "Player" to "Car"
+        if (other.CompareTag("Car")) // Only trigger when car touches
         {
-            Scoreboard.Instance?.CollectBag(); // increment collected count
-            Destroy(gameObject); // remove bag from scene
+            // Increment collected bags
+            Scoreboard.Instance?.CollectBag();
+
+            // Increase pursuit
+            if (gameController != null)
+            {
+                gameController.IncreasePursuit(pursuitIncrease);
+            }
+
+            // Destroy the bag
+            Destroy(gameObject);
         }
     }
 }
