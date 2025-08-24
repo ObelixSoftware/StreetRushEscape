@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,15 +14,13 @@ public class GameController : MonoBehaviour
     public Text scoreText;
     public int score = 1000;
 
-    //Time
     public float startingTime = 600;
     public float globalTime;
 
     private bool isChaseMusicPlaying = false;
 
-    //Scoreboard
-    private string scoreSavePath;
-    private Scoreboard scoreboard = new Scoreboard();
+    [Header("Scoreboard")]
+    public Scoreboard scoreboard;
 
     [Header("Game Over UI")]
     public GameOverManager gameOverManager;
@@ -35,51 +31,40 @@ public class GameController : MonoBehaviour
     public Text highscoreText;
     public int maxScoresToShow = 6;
 
+    private string scoreSavePath;
+
     private void Awake()
     {
         scoreSavePath = Path.Combine(Application.persistentDataPath, "highscores.json");
         LoadScores();
     }
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         globalTime = startingTime;
 
         if (submitScoreButton != null)
-        {
-            submitScoreButton.onClick.AddListener(onSubmitScore);
-        }
+            submitScoreButton.onClick.AddListener(OnSubmitScore);
 
         UpdateHighscoreUI();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (globalTime > 0)
-        {
             globalTime -= Time.deltaTime;
-        }
         else
-        {
             GlobalTimerFinished();
-        }
 
         if (pursuitLevel > 0)
-        {
             pursuitLevel -= Time.deltaTime * pursuitDecayMult;
-        }
 
         timeSlider.value = globalTime;
         pursuitSlider.value = pursuitLevel;
 
         if (Input.GetKey(KeyCode.P))
-        {
             pursuitLevel += 0.1f;
-        }
 
-        // Check if music should switch based on pursuit level
         if (pursuitLevel >= 30f && !isChaseMusicPlaying && SoundManager.Instance != null)
         {
             SoundManager.Instance.PlayChaseMusic();
@@ -92,72 +77,56 @@ public class GameController : MonoBehaviour
         }
 
         if (scoreText != null)
-        {
             scoreText.text = "Score: " + score.ToString();
-        }
     }
 
-    void GlobalTimerFinished()
+    private void GlobalTimerFinished()
     {
-        Debug.Log("Global Timer Finished");
         gameOverManager.TriggerGameOver(transform.position);
     }
 
-    internal void IncreasePursuit(float adjustment)
+    public void IncreasePursuit(float adjustment)
     {
-        if (pursuitLevel < 100)
-        {
-            if (pursuitLevel + adjustment <= 100)
-            {
-                pursuitLevel += adjustment;
-            }
-            else
-            {
-                pursuitLevel = 100f;
-            }
-        }
-
-        Debug.Log(pursuitLevel);
+        pursuitLevel = Mathf.Clamp(pursuitLevel + adjustment, 0f, 100f);
+        Debug.Log("Pursuit: " + pursuitLevel);
     }
 
-    internal void setPursuitDecay(float adjustment = 1f)
+    public void SetPursuitDecay(float adjustment = 1f)
     {
         pursuitDecayMult = adjustment;
     }
 
-    //Functions for scoreboard handling
-    public void increaseScore(int adjustment)
+    public void IncreaseScore(int amount)
     {
-        score += adjustment;
+        score += amount;
     }
 
-    
-    void onSubmitScore()
+    private void OnSubmitScore()
     {
         string playerName = "Anonymous";
         if (playerNameInput != null && !string.IsNullOrWhiteSpace(playerNameInput.text))
-        {
             playerName = playerNameInput.text;
-        }
 
         AddScoreEntry(playerName, score);
-
         UpdateHighscoreUI();
     }
+
     public void AddScoreEntry(string playerName, int score)
     {
-        scoreboard.scores.Add(new ScoreEntry(playerName, score));
-        scoreboard.scores.Sort((a, b) => b.score.CompareTo(a.score));
-        SaveScores();
+        if (scoreboard != null)
+        {
+            scoreboard.scores.Add(new ScoreEntry(playerName, score));
+            scoreboard.scores.Sort((a, b) => b.score.CompareTo(a.score));
+            SaveScores();
+        }
     }
 
     public void UpdateHighscoreUI()
     {
-        if (highscoreText == null) return;
-
-        var scores = GetScores();
+        if (highscoreText == null || scoreboard == null) return;
 
         highscoreText.text = "";
+        var scores = scoreboard.scores;
 
         for (int i = 0; i < Mathf.Min(maxScoresToShow, scores.Count); i++)
         {
@@ -166,14 +135,10 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public List<ScoreEntry> GetScores()
-    {
-        Debug.Log("Scoreboard: " + scoreboard);
-        return scoreboard.scores;
-    }
-
     private void SaveScores()
     {
+        if (scoreboard == null) return;
+
         string json = JsonUtility.ToJson(scoreboard, true);
         File.WriteAllText(scoreSavePath, json);
     }
@@ -183,7 +148,8 @@ public class GameController : MonoBehaviour
         if (File.Exists(scoreSavePath))
         {
             string json = File.ReadAllText(scoreSavePath);
-            scoreboard = JsonUtility.FromJson<Scoreboard>(json);
+            if (scoreboard != null)
+                JsonUtility.FromJsonOverwrite(json, scoreboard);
         }
     }
 }

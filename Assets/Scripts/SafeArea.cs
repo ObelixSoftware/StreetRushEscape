@@ -16,7 +16,7 @@ public class SafeArea : MonoBehaviour
     {
         if (other.CompareTag("Car"))
         {
-            gameController.setPursuitDecay(3f);
+            gameController.SetPursuitDecay(3f);
         }
     }
 
@@ -24,7 +24,7 @@ public class SafeArea : MonoBehaviour
     {
         if (other.CompareTag("Car"))
         {
-            gameController.setPursuitDecay(1f);
+            gameController.SetPursuitDecay(1f);
         }
     }
 }
