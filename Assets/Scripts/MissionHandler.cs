@@ -51,7 +51,7 @@ public class MissionHandler : MonoBehaviour
     //Changes the active waypoint and mission to next in the list and moves the collider.
     void activateMissionWaypoint(int missionID, int waypointID)
     {
-        if (missionList != null && missionList.transform.childCount > 0) {
+        if (missionList.transform.childCount > 0) {
             activeMission = missionID;
             activeWaypoint = waypointID;
             missionObj = missionList.transform.GetChild(missionID).gameObject;
@@ -70,5 +70,10 @@ public class MissionHandler : MonoBehaviour
 
             waypointCollider.transform.position = waypointObj.transform.position;
         }
+    }
+
+    void Update()
+    {
+        //Debug.Log(_waypointDescription)
     }
 }
