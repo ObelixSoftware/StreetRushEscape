@@ -1,57 +1,63 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class ExitZone : MonoBehaviour
 {
-    [Header("Exit Settings")]
-    public GameObject exitIndicator; // Drag a 3D/2D arrow, UI icon, or marker here
-    public string playerTag = "Car"; // Tag of the player's car
+    [Header("UI")]
+    public GameObject exitUI;      // The "Score Display" UI
+    public Text scoreText;        // Displays collected score
 
-    private bool playerInZone = false;
+    private bool triggeredGameOver = false;
 
     private void Start()
     {
-        if (exitIndicator != null)
-            exitIndicator.SetActive(true); // Show the indicator at start
+        if (exitUI != null)
+            exitUI.SetActive(false);
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (other.CompareTag(playerTag))
+        if (collision.CompareTag("Car") && !triggeredGameOver)
         {
-            playerInZone = true;
-            OnPlayerExitReached();
+            triggeredGameOver = true;
+            ShowScore();
+            StartCoroutine(ShowScoreThenGameOver());
         }
     }
 
-    private void OnTriggerExit2D(Collider2D other)
+    private void ShowScore()
     {
-        if (other.CompareTag(playerTag))
+        if (exitUI != null)
+            exitUI.SetActive(true);
+
+        if (scoreText != null && Scoreboard.Instance != null)
         {
-            playerInZone = false;
+            int totalBags = Scoreboard.Instance.scores.Count;
+            int totalAmount = 0;
+
+            foreach (var entry in Scoreboard.Instance.scores)
+            {
+                totalAmount += entry.score;
+            }
+
+            scoreText.text = $"You Collected: ${totalAmount:N0}\nBags: {totalBags}";
         }
+
+        Time.timeScale = 0f; // Pause game during score display
     }
 
-    private void OnPlayerExitReached()
+    private IEnumerator ShowScoreThenGameOver()
     {
-        Debug.Log("Player reached the exit zone!");
+        yield return new WaitForSecondsRealtime(10f);
 
-        // Optional: hide the indicator when player reaches it
-        if (exitIndicator != null)
-            exitIndicator.SetActive(false);
+        if (exitUI != null)
+            exitUI.SetActive(false);
 
-        // Call the other guy's function to display the score
-        // Example (replace with actual function):
-        // ScoreDisplay.Instance.ShowScore();
-
-        // Optional: stop car movement
-        Rigidbody2D rb = GameObject.FindGameObjectWithTag(playerTag)?.GetComponent<Rigidbody2D>();
-        if (rb != null)
-            rb.velocity = Vector2.zero;
-
-        // Optional: disable player controls here
-        // PhysicsPlayerCarController carController = GameObject.FindGameObjectWithTag(playerTag)?.GetComponent<PhysicsPlayerCarController>();
-        // if (carController != null)
-        //     carController.enabled = false;
+        if (GameOverManager.Instance != null)
+        {
+            GameOverManager.Instance.TriggerGameOver(transform.position);
+            Time.timeScale = 0f; // Ensure game stays paused
+        }
     }
 }

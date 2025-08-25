@@ -52,10 +52,13 @@ public class GameOverManager : MonoBehaviour
 
         if (gameOverPanel != null)
             gameOverPanel.SetActive(true);
+
+        Time.timeScale = 0f; // Pause game when Game Over panel shows
     }
 
     private void OnRestartPressed()
     {
+        Time.timeScale = 1f; // Resume game before restarting
         Scene current = SceneManager.GetActiveScene();
         SceneManager.LoadScene(current.buildIndex);
 
@@ -67,6 +70,7 @@ public class GameOverManager : MonoBehaviour
 
     private void OnMenuPressed()
     {
+        Time.timeScale = 1f; // Resume game before loading menu
         SceneManager.LoadScene("Menu");
     }
 }
