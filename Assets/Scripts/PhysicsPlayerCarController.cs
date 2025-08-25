@@ -183,12 +183,26 @@ public class PhysicsPlayerCarController : MonoBehaviour
 {
     if (isDestroyed) return;
 
-    currentHealth -= collisionDamage * (int)Mathf.Abs(rb.velocity.magnitude);
-    currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+    if (collidedObject.tag == "Enemy" || collidedObject.tag == "Pedestrian")
+        {
+            Rigidbody2D collidedBody = collidedObject.GetComponent<Rigidbody2D>();
+            Vector3 diffVector = rb.velocity - collidedBody.velocity;
+            
+            currentHealth -= collisionDamage * (int)diffVector.magnitude;
+            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-    Debug.Log("Dealt the player " + (collisionDamage * (int)Mathf.Abs(rb.velocity.magnitude)) + " damage");
+            Debug.Log("Dealt the player " + (collisionDamage * (int)diffVector.magnitude) + " damage");
+        }
+    else
+        {
+            currentHealth -= collisionDamage;
+            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        }
 
-    UpdateHealthUI();
+
+
+
+            UpdateHealthUI();
 
     if (currentHealth <= 0)
     {
