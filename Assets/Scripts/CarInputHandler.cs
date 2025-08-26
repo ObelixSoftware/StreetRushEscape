@@ -8,7 +8,10 @@ public class CarInputHandler : MonoBehaviour
 
     void Awake()
     {
-        carController = GetComponent<PhysicsPlayerCarController>();    
+        // controlled car machanics
+        carController = GetComponent<PhysicsPlayerCarController>();
+        // UnControlled car machanics 
+        // carController = GetComponent<PhysicsPlayerCarController2>();    
     }
 
     // Start is called before the first frame update
