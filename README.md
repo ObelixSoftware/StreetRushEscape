@@ -26,6 +26,15 @@ This project uses free assets from various creators. Huge thanks to them for pro
 - City Pack (Pixel Art): [Nyknck on Itch.io](https://nyknck.itch.io/citypackpixelart)  
 - Farm Assets: [Itch.io](https://itch.io/game-assets)  
 - Money Bag Icon: [FavPNG](https://favpng.com)
+- Bank Robber Icon: [CustomMade](canva.com)
+- Cutscene Interior Image:[medium](https://medium.com/@nabeelfaraz/bank-vaults-guardians-of-wealth-and-security-cc09a1557171)
+- Cutscene Exterior: Image:[freepik](https://www.freepik.com/free-photo/exterior-modern-buildings_1270299.htm#fromView=keyword&page=1&position=19&uuid=72c31353-14b4-424e-932c-0d1a615c8626&query=Bank+Exterior)
+
+---
+
+## Character Assets
+- Player: [Mixamo](https://www.mixamo.com/)
+- Partner: [Mixamo](https://www.mixamo.com/)
 
 ---
 
@@ -35,5 +44,6 @@ This project uses free assets from various creators. Huge thanks to them for pro
 - Background & Chase Music: [Freesound.org](https://freesound.org)  
 - Game Over Sound: [Pixabay](https://pixabay.com/sound-effects/search/game-over/)  
 - Main Menu Music: [Pixabay](https://pixabay.com/music/search/arcade/)  
+- Cutscene Audio: [SoundAudio](https://soundaudio.cc/blog/machine/)
 
 ---
