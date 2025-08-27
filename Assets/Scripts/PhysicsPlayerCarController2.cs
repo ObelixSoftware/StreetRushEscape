@@ -7,7 +7,28 @@ public class PhysicsPlayerCarController2 : MonoBehaviour
     public float driftFactor = 0.4f;
     public float accelerationFactor = 30f;
     public float turnFactor = 3.5f;
+    
     public float baseMaxSpeed = 20f;
+
+    [Header("Car Turning Curve")]
+    public float steeringRefSpeed = 20f;
+    [SerializeField] 
+    private AnimationCurve steeringCurve = new AnimationCurve(
+        new Keyframe(0.00f, 0.00f),   // no steering when stopped
+        new Keyframe(0.35f, 1.00f),   // max steering around ~35% of ref speed
+        new Keyframe(0.80f, 0.60f),   // taper off at higher speeds
+        new Keyframe(1.00f, 0.45f)    // less steering at full speed
+    );
+
+    [Header("Car Acceleration Curve")]
+    [SerializeField] private float accelerationRefSpeed = 20f;
+    [SerializeField]
+    private AnimationCurve accelerationCurve = new AnimationCurve(
+        new Keyframe(0.00f, 0.3f),   // Weak start
+        new Keyframe(0.25f, 1.0f),   // Strongest pull around 25% of ref speed
+        new Keyframe(0.75f, 0.8f),   // Still strong at mid/high speeds
+        new Keyframe(1.00f, 0.2f)    // Falls off at top speed
+    );
 
     [Header("Health")]
     public int maxHealth = 100;
@@ -65,6 +86,9 @@ public class PhysicsPlayerCarController2 : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
+
+        //Initialize rotation angle to match the editor's rotation
+        rotationAngle = rb.rotation;
     }
 
     void FixedUpdate()
@@ -142,15 +166,23 @@ public class PhysicsPlayerCarController2 : MonoBehaviour
         if (velocityVsUp < (-maxSpeed * 0.5f) && accelerationInput < 0)
             return;
 
-        Vector2 engineForce = accelerationFactor * accelerationInput * transform.up * boost;
+        float speedPercent = Mathf.Clamp01(rb.velocity.magnitude / accelerationRefSpeed);
+        float accelFactorCurve = accelerationCurve.Evaluate(speedPercent);
+
+        Vector2 engineForce = accelerationFactor * accelFactorCurve * accelerationInput * transform.up * boost;
         rb.AddForce(engineForce, ForceMode2D.Force);
     }
 
     void ApplySteering()
     {
-        float minTurningSpeedFactor = Mathf.Clamp01(rb.velocity.magnitude / 8);
+        float speedPercent = Mathf.Clamp01(rb.velocity.magnitude / steeringRefSpeed);
+
+        float steeringFactor = Mathf.Clamp01(steeringCurve.Evaluate(speedPercent));
+
         float directionMultiplier = (velocityVsUp >= 0) ? 1f : -1f;
-        rotationAngle -= steeringInput * turnFactor * minTurningSpeedFactor * directionMultiplier;
+
+        rotationAngle -= steeringInput * turnFactor * steeringFactor * directionMultiplier;
+
         rb.MoveRotation(rotationAngle);
     }
 
@@ -160,6 +192,7 @@ public class PhysicsPlayerCarController2 : MonoBehaviour
         float targetAngle = Mathf.Round(rb.rotation / 90f) * 90f;
         float smoothedAngle = Mathf.LerpAngle(rb.rotation, targetAngle, Time.fixedDeltaTime * straightenSpeed);
         rb.MoveRotation(smoothedAngle);
+        rotationAngle = rb.rotation;
     }
 
     void ReduceCarDrift()
