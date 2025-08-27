@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class CarInputHandler : MonoBehaviour
 {
-    PhysicsPlayerCarController carController;
+    PhysicsPlayerCarController2 carController;
 
     void Awake()
     {
         // controlled car machanics
-        carController = GetComponent<PhysicsPlayerCarController>();
+        //carController = GetComponent<PhysicsPlayerCarController>();
         // UnControlled car machanics 
-        // carController = GetComponent<PhysicsPlayerCarController2>();    
+        carController = GetComponent<PhysicsPlayerCarController2>();    
     }
 
     // Start is called before the first frame update
