@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5760145587032998370}
   - component: {fileID: 3786918790669288600}
   m_Layer: 0
-  m_Name: Mission Title
+  m_Name: MissionTitle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2433,7 +2433,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 0
-  m_FillAmount: 1
+  m_FillAmount: 0.989
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
@@ -2762,7 +2762,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8079628787971129701}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.05, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 5.583975, y: 5.449152, z: 1}
   m_Children: []
   m_Father: {fileID: 8079628788138018953}
@@ -2806,7 +2806,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 50
   m_Sprite: {fileID: 21300000, guid: 86b3a8c6bb3e36c448b711fc502e2fec, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -2828,8 +2828,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8079628788138018953}
   - component: {fileID: 8079628788138018955}
-  - component: {fileID: 8079628788138018954}
   - component: {fileID: 8079628788138018964}
+  - component: {fileID: 1871149262}
+  - component: {fileID: 1871149263}
   m_Layer: 0
   m_Name: Car
   m_TagString: Car
@@ -2846,7 +2847,7 @@ Transform:
   m_GameObject: {fileID: 8079628788138018952}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2.763708, y: -1.5284537, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.73279, y: 0.73279, z: 0.73279}
   m_Children:
   - {fileID: 8079628787971129702}
   - {fileID: 8079628787533786840}
@@ -2879,33 +2880,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
---- !u!114 &8079628788138018954
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8079628788138018952}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0bdfe09ac2064f10a227f6d40928c4f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  acceleration: 10
-  maxForwardSpeed: 10
-  maxReverseSpeed: 5
-  steeringSpeed: 150
-  bounceBackDistance: 1
-  bounceBackSpeed: 5
-  driftDrag: 0.05
-  normalDrag: 1
-  driftSteeringMultiplier: 2.5
-  driftSpeedBoost: 3
-  boostMultiplier: 2
-  boostDuration: 2
-  maxHealth: 100
-  collisionDamage: 20
-  healthBarSlider: {fileID: 8079628787390842740}
 --- !u!61 &8079628788138018964
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2919,7 +2893,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.09}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -2930,8 +2904,124 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.23, y: 2.53}
   m_EdgeRadius: 0
+--- !u!114 &1871149262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8079628788138018952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f07ec5a55dd767c488b2405c61af01cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  driftFactor: 0.4
+  accelerationFactor: 30
+  turnFactor: 3.5
+  baseMaxSpeed: 15
+  steeringRefSpeed: 20
+  steeringCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.3338103
+      outSlope: 3.3338103
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.30026728
+      value: 1.0010341
+      inSlope: 1.8674407
+      outSlope: 0.09802438
+      tangentMode: 1
+      weightedMode: 3
+      inWeight: 0.5505101
+      outWeight: 0.7955603
+    - serializedVersion: 3
+      time: 1.001709
+      value: 0.39983368
+      inSlope: -0.85709256
+      outSlope: -0.85709256
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  accelerationRefSpeed: 15
+  accelerationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.3
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.19311729
+      value: 0.8296327
+      inSlope: 65.137665
+      outSlope: 21.577143
+      tangentMode: 1
+      weightedMode: 3
+      inWeight: 0.04067028
+      outWeight: 0.053577937
+    - serializedVersion: 3
+      time: 0.27526855
+      value: 1.0087433
+      inSlope: -0.100053206
+      outSlope: 0.13564034
+      tangentMode: 1
+      weightedMode: 3
+      inWeight: 0.53181905
+      outWeight: 0.8076028
+    - serializedVersion: 3
+      time: 1
+      value: 0.2
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  maxHealth: 100
+  collisionDamage: 1
+  healthBarSlider: {fileID: 8079628787390842740}
+  boostMultiplier: 1.5
+  boostDrainRate: 25
+  maxBoost: 100
+  boostBarSlider: {fileID: 4551025498675915892}
+  driftSmokeSpawnPoint: {fileID: 8491513496611578308}
+  driftSmokeInterval: 0.05
+  gameController: {fileID: 0}
+  straightenSpeed: 5
+--- !u!114 &1871149263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8079628788138018952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71548bc962324ff49b1041549c5448fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8079628788145642440
 GameObject:
   m_ObjectHideFlags: 0
