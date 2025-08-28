@@ -177,12 +177,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   driftFactor: 0.4
-  accelerationFactor: 15
+  accelerationFactor: 10
   turnFactor: 4
   maxSpeed: 16
   stationaryThreshold: 1
-  stationaryDuration: 1
-  reverseDuration: 1
+  stationaryDuration: 0.3
+  reverseDuration: 0.5
+  accelerationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.3
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.19311729
+      value: 0.8296327
+      inSlope: 65.137665
+      outSlope: 21.577143
+      tangentMode: 1
+      weightedMode: 3
+      inWeight: 0.04067028
+      outWeight: 0.053577937
+    - serializedVersion: 3
+      time: 0.27526855
+      value: 1.0087433
+      inSlope: -0.100053206
+      outSlope: 0.13564034
+      tangentMode: 1
+      weightedMode: 3
+      inWeight: 0.53181905
+      outWeight: 0.8076028
+    - serializedVersion: 3
+      time: 1
+      value: 0.2
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  maxAcceleration: 16
   playerTransform: {fileID: 0}
   isActive: 0
 --- !u!1 &5371777496126894835

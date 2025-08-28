@@ -127,6 +127,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44b84ee4cdbadd84da01b22f81414981, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameController: {fileID: 0}
+  pursuitIncrease: 20
 --- !u!61 &1501685208342940034
 BoxCollider2D:
   m_ObjectHideFlags: 0
