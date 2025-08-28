@@ -18,17 +18,29 @@ public class NPCCarCollisionSensor : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        collisionActive++;
-        if (collisionActive == 1) {
-            copDriveHandler.OnSensorTriggered(isLeftSensor, true);
+        if(!other.CompareTag("Car"))
+        {
+            collisionActive++;
+
+            if (collisionActive == 1)
+            {
+                copDriveHandler.OnSensorTriggered(isLeftSensor, true);
+            }
         }
+
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        collisionActive--;
-        if (collisionActive == 0) {
-            copDriveHandler.OnSensorTriggered(isLeftSensor, false);
+        if (!other.CompareTag("Car"))
+        {
+            collisionActive--;
+
+            if (collisionActive == 0)
+            {
+                copDriveHandler.OnSensorTriggered(isLeftSensor, false);
+            }
         }
+        
     }
 }

@@ -8,12 +8,16 @@ public class CopDriveHandler : MonoBehaviour
     public float driftFactor = 0.4f;
     public float accelerationFactor = 30.0f;
     public float turnFactor = 3.5f;
-    public float maxSpeed = 10;
+    public float maxSpeed = 16;
 
     [Header("Reverse Settings")]
     public float stationaryThreshold = 1f;
-    public float stationaryDuration = 1f;
-    public float reverseDuration = 1f;
+    public float stationaryDuration = 0.3f;
+    public float reverseDuration = 0.5f;
+
+    [Header("Acceleration Curve")]
+    public AnimationCurve accelerationCurve;
+    public float maxAcceleration = 16f;
 
     public Transform playerTransform;
 
@@ -159,18 +163,23 @@ public class CopDriveHandler : MonoBehaviour
 
         if (isReversing)
         {
-            engineForceVector = -accelerationFactor * transform.up;
+            engineForceVector = -maxAcceleration * transform.up;
         }
         else
         {
             if (velocityVsUp > maxSpeed)
                 return;
 
+            // Normalize speed between 0 and 1
+            float speedPercent = Mathf.Clamp01(rb.velocity.magnitude / maxSpeed);
+
+            // Evaluate acceleration multiplier from curve
+            float curveMultiplier = accelerationCurve.Evaluate(speedPercent);
+
             engineForceVector = accelerationFactor * transform.up;
         }
-        
+
         rb.AddForce(engineForceVector, ForceMode2D.Force);
-        
     }
 
     void ApplySteering()

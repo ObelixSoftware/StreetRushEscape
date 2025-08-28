@@ -212,19 +212,20 @@ public class PhysicsPlayerCarController2 : MonoBehaviour
         accelerationInput = inputVector.y;
     }
 
-    void HandleDamage(GameObject collidedObject)
+    void HandleDamage(GameObject collidedObject, Collision2D collision)
 {
     if (isDestroyed) return;
 
     if (collidedObject.tag == "Enemy" || collidedObject.tag == "Pedestrian")
         {
-            Rigidbody2D collidedBody = collidedObject.GetComponent<Rigidbody2D>();
-            Vector3 diffVector = rb.velocity - collidedBody.velocity;
-            
-            currentHealth -= collisionDamage * (int)diffVector.magnitude;
+            float relativeSpeed = collision.relativeVelocity.magnitude;
+
+
+            int damage = Mathf.RoundToInt(collisionDamage * relativeSpeed);
+            currentHealth -= damage;
             currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-            Debug.Log("Dealt the player " + (collisionDamage * (int)diffVector.magnitude) + " damage");
+            Debug.Log("Dealt the player " + damage + " damage");
         }
     else
         {
@@ -274,14 +275,14 @@ public class PhysicsPlayerCarController2 : MonoBehaviour
         {
             currentBoost = Mathf.Clamp(currentBoost + 30f, 0, maxBoost);
             UpdateBoostUI();
-            Destroy(other.transform.root.gameObject); // Updated line
+            Destroy(other.transform.parent.gameObject); // Updated line
         }
 
         if (other.CompareTag("HealthItem"))
         {
             currentHealth = Mathf.Clamp(currentHealth + 25, 0, maxHealth);
             UpdateHealthUI();
-            Destroy(other.transform.root.gameObject); // Updated line
+            Destroy(other.transform.parent.gameObject); // Updated line
         }
     }
 
@@ -297,6 +298,6 @@ public class PhysicsPlayerCarController2 : MonoBehaviour
             }
         }
 
-        HandleDamage(collision.gameObject);
+        HandleDamage(collision.gameObject, collision);
     }
 }

@@ -59,6 +59,7 @@ public class GameOverManager : MonoBehaviour
     private void OnRestartPressed()
     {
         Time.timeScale = 1f; // Resume game before restarting
+        CopDriveHandler.Cops.Clear();
         Scene current = SceneManager.GetActiveScene();
         SceneManager.LoadScene(current.buildIndex);
 
@@ -71,6 +72,7 @@ public class GameOverManager : MonoBehaviour
     private void OnMenuPressed()
     {
         Time.timeScale = 1f; // Resume game before loading menu
+        CopDriveHandler.Cops.Clear();
         SceneManager.LoadScene("Menu");
     }
 }
