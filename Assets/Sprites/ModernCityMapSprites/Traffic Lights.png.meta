@@ -324,7 +324,7 @@ TextureImporter:
       213: 7522352117764892993
     second: Traffic Lights_106
   externalObjects: {}
-  serializedVersion: 11
+  serializedVersion: 12
   mipmaps:
     mipMapMode: 0
     enableMipMap: 0
@@ -341,9 +341,12 @@ TextureImporter:
     externalNormalMap: 0
     heightScale: 0.25
     normalMapFilter: 0
+    flipGreenChannel: 0
   isReadable: 0
   streamingMipmaps: 0
   streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
   grayScaleToAlpha: 0
   generateCubemap: 6
   cubemapConvolution: 0
@@ -375,10 +378,15 @@ TextureImporter:
   textureType: 8
   textureShape: 1
   singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
   maxTextureSizeSet: 0
   compressionQualitySet: 0
   textureFormatSet: 0
+  ignorePngGamma: 0
   applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 1
   platformSettings:
   - serializedVersion: 3
     buildTarget: DefaultTexturePlatform
@@ -390,6 +398,7 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 3
@@ -402,6 +411,59 @@ TextureImporter:
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: iPhone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Server
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
@@ -2664,9 +2726,116 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-  spritePackingTag: 
+    nameFileIdTable:
+      Traffic Lights_0: 4537413327939523738
+      Traffic Lights_1: -646394695638797185
+      Traffic Lights_10: 5070956433216147542
+      Traffic Lights_100: 4130544959862733878
+      Traffic Lights_101: 8388219847340179492
+      Traffic Lights_102: -3111518539727929874
+      Traffic Lights_103: 3909251374358504867
+      Traffic Lights_104: 1683720368261915803
+      Traffic Lights_105: 1685471839978259786
+      Traffic Lights_106: 7522352117764892993
+      Traffic Lights_11: 8261054138461788979
+      Traffic Lights_12: -2823056032644058878
+      Traffic Lights_13: 3340809664404393531
+      Traffic Lights_14: 5590395596355186743
+      Traffic Lights_15: 6072055416993637257
+      Traffic Lights_16: -4777588192684699486
+      Traffic Lights_17: -781740806388920481
+      Traffic Lights_18: -936030077385775890
+      Traffic Lights_19: 2111958549340653591
+      Traffic Lights_2: -1676972549856708260
+      Traffic Lights_20: -854081342221978084
+      Traffic Lights_21: -996066530029509149
+      Traffic Lights_22: -1929004647122078501
+      Traffic Lights_23: -1078643251194319673
+      Traffic Lights_24: -2057692266373697638
+      Traffic Lights_25: -5324664464876027076
+      Traffic Lights_26: 3549301726442630443
+      Traffic Lights_27: 9159780353978964609
+      Traffic Lights_28: -1811641950597939933
+      Traffic Lights_29: -720439466374352333
+      Traffic Lights_3: 5105834016484465805
+      Traffic Lights_30: 3991396467721084302
+      Traffic Lights_31: 670023526845943010
+      Traffic Lights_32: 12784993352620598
+      Traffic Lights_33: 3875458719254401265
+      Traffic Lights_34: -5101635147674688475
+      Traffic Lights_35: -7302959790448754949
+      Traffic Lights_36: -1489677620118623406
+      Traffic Lights_37: 8336308051587031576
+      Traffic Lights_38: 2722022186675838815
+      Traffic Lights_39: -4663290339313994890
+      Traffic Lights_4: 5585734348619551172
+      Traffic Lights_40: -3857055824840712206
+      Traffic Lights_41: 7252086522516578595
+      Traffic Lights_42: 8932697113101526392
+      Traffic Lights_43: 1072138568083559212
+      Traffic Lights_44: -2123135990591758590
+      Traffic Lights_45: -1075441182919312731
+      Traffic Lights_46: -4935519804786626960
+      Traffic Lights_47: 1494327845789678502
+      Traffic Lights_48: 1283827341386014583
+      Traffic Lights_49: -7922305979375773336
+      Traffic Lights_5: 744815398640041812
+      Traffic Lights_50: 6057981680783462228
+      Traffic Lights_51: 2589629294684934525
+      Traffic Lights_52: -1049893406014144109
+      Traffic Lights_53: 7066364620464428282
+      Traffic Lights_54: -6091442080975031827
+      Traffic Lights_55: 7069050985535294655
+      Traffic Lights_56: -8143816884203681462
+      Traffic Lights_57: -5640867768829554718
+      Traffic Lights_58: 1144957967693368913
+      Traffic Lights_59: 7496377395973568107
+      Traffic Lights_6: 7670254877253774522
+      Traffic Lights_60: -797255200054695747
+      Traffic Lights_61: 3063809544641784950
+      Traffic Lights_62: -3826406734293484017
+      Traffic Lights_63: 2697789089712762644
+      Traffic Lights_64: 6081558463564545710
+      Traffic Lights_65: 3479143953836374317
+      Traffic Lights_66: 7500583818837123571
+      Traffic Lights_67: -4021258675240406463
+      Traffic Lights_68: 3140258482875465238
+      Traffic Lights_69: -78184760897083127
+      Traffic Lights_7: -4242904455519640753
+      Traffic Lights_70: -4127417975661997701
+      Traffic Lights_71: 4761385025228930259
+      Traffic Lights_72: 5882509620387068506
+      Traffic Lights_73: -5689621479522923843
+      Traffic Lights_74: 1962793086737272144
+      Traffic Lights_75: 300488281238101610
+      Traffic Lights_76: -1805674723769881563
+      Traffic Lights_77: -3299568125937831380
+      Traffic Lights_78: -1897215095051872825
+      Traffic Lights_79: 8191692919434211308
+      Traffic Lights_8: -6448652055263509201
+      Traffic Lights_80: -7603318494013235309
+      Traffic Lights_81: -4583985397771172361
+      Traffic Lights_82: 564618111567192134
+      Traffic Lights_83: -3275812893176707460
+      Traffic Lights_84: -7774152450477673531
+      Traffic Lights_85: -5178492523964848346
+      Traffic Lights_86: 9147670301207582142
+      Traffic Lights_87: -8713566016314871886
+      Traffic Lights_88: 6627616597929604137
+      Traffic Lights_89: 7016950031719065309
+      Traffic Lights_9: -3120860277622143191
+      Traffic Lights_90: -3029134096842718484
+      Traffic Lights_91: -1100465249700192961
+      Traffic Lights_92: -1224764514496968309
+      Traffic Lights_93: 6134515820815396452
+      Traffic Lights_94: 897487540719513378
+      Traffic Lights_95: 1656492353787829464
+      Traffic Lights_96: 3881428045703540247
+      Traffic Lights_97: -931119775024428398
+      Traffic Lights_98: 2949948090915789908
+      Traffic Lights_99: -7150326314423545424
+  mipmapLimitGroupName: 
   pSDRemoveMatte: 0
-  pSDShowRemoveMatteOption: 0
   userData: 
   assetBundleName: 
   assetBundleVariant: 
