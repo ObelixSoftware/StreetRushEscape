@@ -711,7 +711,13 @@ PlayerSettings:
   windowsGamepadBackendHint: 0
   cloudProjectId: d4ff0cec-366d-4fc1-b03b-09575aa363f7
   framebufferDepthMemorylessMode: 0
-  qualitySettingsNames: []
+  qualitySettingsNames:
+  - Very Low
+  - Low
+  - Medium
+  - High
+  - Very High
+  - Ultra
   projectName: StreetRushCityEscape2D 2025-05-10_14-54-16
   organizationId: unity_1df3f3c25357933b93f1
   cloudEnabled: 0

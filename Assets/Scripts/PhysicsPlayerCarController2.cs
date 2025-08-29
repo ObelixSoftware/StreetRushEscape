@@ -61,6 +61,10 @@ public class PhysicsPlayerCarController2 : MonoBehaviour
     AudioSource audioSource;
     public GameController gameController;
 
+    [Header("Cut Scene Testing")]
+    public bool TestCutScene = false;
+    public MissionCutsceneController cutsceneController;
+
     private bool straightenMode = false; // CTRL straighten toggle
     public float straightenSpeed = 5f;   // How fast to straighten
 
@@ -214,6 +218,13 @@ public class PhysicsPlayerCarController2 : MonoBehaviour
 
     void HandleDamage(GameObject collidedObject, Collision2D collision)
 {
+    #if !UNITY_EDITOR
+    if (TestCutScene) {
+        cutsceneController.StartCutscene();
+        return;
+    }
+    #endif
+
     if (isDestroyed) return;
 
     if (collidedObject.tag == "Enemy" || collidedObject.tag == "Pedestrian")
